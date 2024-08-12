@@ -15,7 +15,6 @@
  */
 
 /* eslint-disable no-console */
-/* eslint-disable no-await-in-loop */
 
 const { readExternalSources } = require('ibm-cloud-sdk-core');
 const WatsonxDataV2 = require('../../dist/watsonx-data/v2');
@@ -1473,7 +1472,7 @@ describe('WatsonxDataV2_integration', () => {
   test('listIngestionJobs()', async () => {
     const params = {
       authInstanceId: 'testString',
-      start: '1',
+      page: 1,
       jobsPerPage: 1,
     };
 
@@ -1483,28 +1482,106 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
-  test('listIngestionJobs() via IngestionJobsPager', async () => {
-    const params = {
-      authInstanceId: 'testString',
-      jobsPerPage: 1,
+  test('createIngestionJobs()', async () => {
+    // Request models needed by this operation.
+
+    // IngestionJobPrototypeCsvProperty
+    const ingestionJobPrototypeCsvPropertyModel = {
+      encoding: 'utf-8',
+      escape_character: '\\\\',
+      field_delimiter: ',',
+      header: true,
+      line_delimiter: '\\n',
     };
 
-    const allResults = [];
+    // IngestionJobPrototypeExecuteConfig
+    const ingestionJobPrototypeExecuteConfigModel = {
+      driver_cores: 1,
+      driver_memory: '2G',
+      executor_cores: 1,
+      executor_memory: '2G',
+      num_executors: 1,
+    };
 
-    // Test getNext().
-    let pager = new WatsonxDataV2.IngestionJobsPager(watsonxDataService, params);
-    while (pager.hasNext()) {
-      const nextPage = await pager.getNext();
-      expect(nextPage).not.toBeNull();
-      allResults.push(...nextPage);
-    }
+    const params = {
+      authInstanceId: 'testString',
+      jobId: 'ingestion-1699459946935',
+      sourceDataFiles: 's3://demobucket/data/yellow_tripdata_2022-01.parquet',
+      targetTable: 'demodb.test.targettable',
+      username: 'user1',
+      createIfNotExist: false,
+      csvProperty: ingestionJobPrototypeCsvPropertyModel,
+      engineId: 'spark123',
+      executeConfig: ingestionJobPrototypeExecuteConfigModel,
+      partitionBy: 'col1, col2',
+      schema: '{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"ID","required":true,"type":"int"},{"id":2,"name":"Name","required":true,"type":"string"}]}',
+      sourceFileType: 'csv',
+      validateCsvHeader: false,
+    };
 
-    // Test getAll().
-    pager = new WatsonxDataV2.IngestionJobsPager(watsonxDataService, params);
-    const allItems = await pager.getAll();
-    expect(allItems).not.toBeNull();
-    expect(allItems).toHaveLength(allResults.length);
-    console.log(`Retrieved a total of ${allResults.length} items(s) with pagination.`);
+    const res = await watsonxDataService.createIngestionJobs(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(202);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createIngestionJobsLocalFiles()', async () => {
+    const params = {
+      authInstanceId: 'testString',
+      sourceDataFile: Buffer.from('This is a mock file.'),
+      targetTable: 'testString',
+      jobId: 'testString',
+      username: 'testString',
+      sourceDataFileContentType: 'testString',
+      sourceFileType: 'csv',
+      csvProperty: 'testString',
+      createIfNotExist: false,
+      validateCsvHeader: false,
+      executeConfig: 'testString',
+      engineId: 'testString',
+    };
+
+    const res = await watsonxDataService.createIngestionJobsLocalFiles(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(202);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getIngestionJob()', async () => {
+    const params = {
+      jobId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getIngestionJob(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createPreviewIngestionFile()', async () => {
+    // Request models needed by this operation.
+
+    // PreviewIngestionFilePrototypeCsvProperty
+    const previewIngestionFilePrototypeCsvPropertyModel = {
+      encoding: 'utf-8',
+      escape_character: '\\\\',
+      field_delimiter: ',',
+      header: true,
+      line_delimiter: '\\n',
+    };
+
+    const params = {
+      authInstanceId: 'testString',
+      sourceDataFiles: 's3://demobucket/data/yellow_tripdata_2022-01.parquet',
+      csvProperty: previewIngestionFilePrototypeCsvPropertyModel,
+      sourceFileType: 'csv',
+    };
+
+    const res = await watsonxDataService.createPreviewIngestionFile(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
   });
 
   test('deregisterBucket()', async () => {
@@ -1732,6 +1809,18 @@ describe('WatsonxDataV2_integration', () => {
     };
 
     const res = await watsonxDataService.deleteMilvusService(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(204);
+    expect(res.result).toBeDefined();
+  });
+
+  test('deleteIngestionJobs()', async () => {
+    const params = {
+      jobId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.deleteIngestionJobs(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(204);
     expect(res.result).toBeDefined();

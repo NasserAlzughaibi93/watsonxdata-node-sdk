@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/* eslint-disable no-await-in-loop */
-
-const nock = require('nock');
-
 // need to import the whole package to mock getAuthenticatorFromEnvironment
 const sdkCorePackage = require('ibm-cloud-sdk-core');
 
@@ -45,12 +41,6 @@ function mock_createRequest() {
   if (!createRequestMock) {
     createRequestMock = jest.spyOn(watsonxDataService, 'createRequest');
     createRequestMock.mockImplementation(() => Promise.resolve());
-  }
-}
-function unmock_createRequest() {
-  if (createRequestMock) {
-    createRequestMock.mockRestore();
-    createRequestMock = null;
   }
 }
 
@@ -9103,11 +9093,11 @@ describe('WatsonxDataV2', () => {
       function __listIngestionJobsTest() {
         // Construct the params object for operation listIngestionJobs
         const authInstanceId = 'testString';
-        const start = '1';
+        const page = 1;
         const jobsPerPage = 1;
         const listIngestionJobsParams = {
           authInstanceId,
-          start,
+          page,
           jobsPerPage,
         };
 
@@ -9126,7 +9116,7 @@ describe('WatsonxDataV2', () => {
         const expectedContentType = undefined;
         checkMediaHeaders(createRequestMock, expectedAccept, expectedContentType);
         checkUserHeader(createRequestMock, 'AuthInstanceId', authInstanceId);
-        expect(mockRequestOptions.qs.start).toEqual(start);
+        expect(mockRequestOptions.qs.page).toEqual(page);
         expect(mockRequestOptions.qs.jobs_per_page).toEqual(jobsPerPage);
       }
 
@@ -9186,54 +9176,561 @@ describe('WatsonxDataV2', () => {
         expect(err.message).toMatch(/Missing required parameters/);
       });
     });
+  });
 
-    describe('IngestionJobsPager tests', () => {
-      const serviceUrl = watsonxDataServiceOptions.url;
-      const path = '/ingestion_jobs';
-      const mockPagerResponse1 =
-        '{"next":{"href":"https://myhost.com/somePath?start=1"},"total_count":2,"limit":1,"ingestion_jobs":[{"create_if_not_exist":false,"csv_property":{"encoding":"utf-8","escape_character":"|","field_delimiter":",","header":true,"line_delimiter":"\n"},"details":"Path does not exist \'demobucket/data/yellow_tripdata_2022-01.parquet\'. Detail: [errno 2] No such file or directory","end_timestamp":"1685088775","engine_id":"spark123","engine_name":"sparkdemo","execute_config":{"driver_cores":1,"driver_memory":"2G","executor_cores":1,"executor_memory":"2G","num_executors":1},"instance_id":"1684432229673971","job_id":"ingestion-1699459946935","partition_by":"col1, col2","schema":"{\\"type\\":\\"struct\\",\\"schema-id\\":0,\\"fields\\":[{\\"id\\":1,\\"name\\":\\"ID\\",\\"required\\":true,\\"type\\":\\"int\\"},{\\"id\\":2,\\"name\\":\\"Name\\",\\"required\\":true,\\"type\\":\\"string\\"}]}","source_data_files":"s3://demobucket/data/yellow_tripdata_2022-01.parquet","source_file_type":"csv","start_timestamp":"1685084455","status":"running","target_table":"demodb.test.targettable","username":"ibmlhadmin","validate_csv_header":false}]}';
-      const mockPagerResponse2 =
-        '{"total_count":2,"limit":1,"ingestion_jobs":[{"create_if_not_exist":false,"csv_property":{"encoding":"utf-8","escape_character":"|","field_delimiter":",","header":true,"line_delimiter":"\n"},"details":"Path does not exist \'demobucket/data/yellow_tripdata_2022-01.parquet\'. Detail: [errno 2] No such file or directory","end_timestamp":"1685088775","engine_id":"spark123","engine_name":"sparkdemo","execute_config":{"driver_cores":1,"driver_memory":"2G","executor_cores":1,"executor_memory":"2G","num_executors":1},"instance_id":"1684432229673971","job_id":"ingestion-1699459946935","partition_by":"col1, col2","schema":"{\\"type\\":\\"struct\\",\\"schema-id\\":0,\\"fields\\":[{\\"id\\":1,\\"name\\":\\"ID\\",\\"required\\":true,\\"type\\":\\"int\\"},{\\"id\\":2,\\"name\\":\\"Name\\",\\"required\\":true,\\"type\\":\\"string\\"}]}","source_data_files":"s3://demobucket/data/yellow_tripdata_2022-01.parquet","source_file_type":"csv","start_timestamp":"1685084455","status":"running","target_table":"demodb.test.targettable","username":"ibmlhadmin","validate_csv_header":false}]}';
+  describe('createIngestionJobs', () => {
+    describe('positive tests', () => {
+      // Request models needed by this operation.
 
-      beforeEach(() => {
-        unmock_createRequest();
-        const scope = nock(serviceUrl)
-          .get((uri) => uri.includes(path))
-          .reply(200, mockPagerResponse1)
-          .get((uri) => uri.includes(path))
-          .reply(200, mockPagerResponse2);
-      });
+      // IngestionJobPrototypeCsvProperty
+      const ingestionJobPrototypeCsvPropertyModel = {
+        encoding: 'utf-8',
+        escape_character: '\\\\',
+        field_delimiter: ',',
+        header: true,
+        line_delimiter: '\\n',
+      };
 
-      afterEach(() => {
-        nock.cleanAll();
-        mock_createRequest();
-      });
+      // IngestionJobPrototypeExecuteConfig
+      const ingestionJobPrototypeExecuteConfigModel = {
+        driver_cores: 1,
+        driver_memory: '2G',
+        executor_cores: 1,
+        executor_memory: '2G',
+        num_executors: 1,
+      };
 
-      test('getNext()', async () => {
-        const params = {
-          authInstanceId: 'testString',
-          jobsPerPage: 1,
+      function __createIngestionJobsTest() {
+        // Construct the params object for operation createIngestionJobs
+        const authInstanceId = 'testString';
+        const jobId = 'ingestion-1699459946935';
+        const sourceDataFiles = 's3://demobucket/data/yellow_tripdata_2022-01.parquet';
+        const targetTable = 'demodb.test.targettable';
+        const username = 'user1';
+        const createIfNotExist = false;
+        const csvProperty = ingestionJobPrototypeCsvPropertyModel;
+        const engineId = 'spark123';
+        const executeConfig = ingestionJobPrototypeExecuteConfigModel;
+        const partitionBy = 'col1, col2';
+        const schema = '{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"ID","required":true,"type":"int"},{"id":2,"name":"Name","required":true,"type":"string"}]}';
+        const sourceFileType = 'csv';
+        const validateCsvHeader = false;
+        const createIngestionJobsParams = {
+          authInstanceId,
+          jobId,
+          sourceDataFiles,
+          targetTable,
+          username,
+          createIfNotExist,
+          csvProperty,
+          engineId,
+          executeConfig,
+          partitionBy,
+          schema,
+          sourceFileType,
+          validateCsvHeader,
         };
-        const allResults = [];
-        const pager = new WatsonxDataV2.IngestionJobsPager(watsonxDataService, params);
-        while (pager.hasNext()) {
-          const nextPage = await pager.getNext();
-          expect(nextPage).not.toBeNull();
-          allResults.push(...nextPage);
+
+        const createIngestionJobsResult = watsonxDataService.createIngestionJobs(createIngestionJobsParams);
+
+        // all methods should return a Promise
+        expectToBePromise(createIngestionJobsResult);
+
+        // assert that create request was called
+        expect(createRequestMock).toHaveBeenCalledTimes(1);
+
+        const mockRequestOptions = getOptions(createRequestMock);
+
+        checkUrlAndMethod(mockRequestOptions, '/ingestion_jobs', 'POST');
+        const expectedAccept = 'application/json';
+        const expectedContentType = 'application/json';
+        checkMediaHeaders(createRequestMock, expectedAccept, expectedContentType);
+        checkUserHeader(createRequestMock, 'AuthInstanceId', authInstanceId);
+        expect(mockRequestOptions.body.job_id).toEqual(jobId);
+        expect(mockRequestOptions.body.source_data_files).toEqual(sourceDataFiles);
+        expect(mockRequestOptions.body.target_table).toEqual(targetTable);
+        expect(mockRequestOptions.body.username).toEqual(username);
+        expect(mockRequestOptions.body.create_if_not_exist).toEqual(createIfNotExist);
+        expect(mockRequestOptions.body.csv_property).toEqual(csvProperty);
+        expect(mockRequestOptions.body.engine_id).toEqual(engineId);
+        expect(mockRequestOptions.body.execute_config).toEqual(executeConfig);
+        expect(mockRequestOptions.body.partition_by).toEqual(partitionBy);
+        expect(mockRequestOptions.body.schema).toEqual(schema);
+        expect(mockRequestOptions.body.source_file_type).toEqual(sourceFileType);
+        expect(mockRequestOptions.body.validate_csv_header).toEqual(validateCsvHeader);
+      }
+
+      test('should pass the right params to createRequest with enable and disable retries', () => {
+        // baseline test
+        __createIngestionJobsTest();
+
+        // enable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.enableRetries();
+        __createIngestionJobsTest();
+
+        // disable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.disableRetries();
+        __createIngestionJobsTest();
+      });
+
+      test('should prioritize user-given headers', () => {
+        // parameters
+        const authInstanceId = 'testString';
+        const jobId = 'ingestion-1699459946935';
+        const sourceDataFiles = 's3://demobucket/data/yellow_tripdata_2022-01.parquet';
+        const targetTable = 'demodb.test.targettable';
+        const username = 'user1';
+        const userAccept = 'fake/accept';
+        const userContentType = 'fake/contentType';
+        const createIngestionJobsParams = {
+          authInstanceId,
+          jobId,
+          sourceDataFiles,
+          targetTable,
+          username,
+          headers: {
+            Accept: userAccept,
+            'Content-Type': userContentType,
+          },
+        };
+
+        watsonxDataService.createIngestionJobs(createIngestionJobsParams);
+        checkMediaHeaders(createRequestMock, userAccept, userContentType);
+      });
+    });
+
+    describe('negative tests', () => {
+      test('should enforce required parameters', async () => {
+        let err;
+        try {
+          await watsonxDataService.createIngestionJobs({});
+        } catch (e) {
+          err = e;
         }
-        expect(allResults).not.toBeNull();
-        expect(allResults).toHaveLength(2);
+
+        expect(err.message).toMatch(/Missing required parameters/);
       });
 
-      test('getAll()', async () => {
-        const params = {
-          authInstanceId: 'testString',
-          jobsPerPage: 1,
+      test('should reject promise when required params are not given', async () => {
+        let err;
+        try {
+          await watsonxDataService.createIngestionJobs();
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
+      });
+    });
+  });
+
+  describe('createIngestionJobsLocalFiles', () => {
+    describe('positive tests', () => {
+      function __createIngestionJobsLocalFilesTest() {
+        // Construct the params object for operation createIngestionJobsLocalFiles
+        const authInstanceId = 'testString';
+        const sourceDataFile = Buffer.from('This is a mock file.');
+        const targetTable = 'testString';
+        const jobId = 'testString';
+        const username = 'testString';
+        const sourceDataFileContentType = 'testString';
+        const sourceFileType = 'csv';
+        const csvProperty = 'testString';
+        const createIfNotExist = false;
+        const validateCsvHeader = false;
+        const executeConfig = 'testString';
+        const engineId = 'testString';
+        const createIngestionJobsLocalFilesParams = {
+          authInstanceId,
+          sourceDataFile,
+          targetTable,
+          jobId,
+          username,
+          sourceDataFileContentType,
+          sourceFileType,
+          csvProperty,
+          createIfNotExist,
+          validateCsvHeader,
+          executeConfig,
+          engineId,
         };
-        const pager = new WatsonxDataV2.IngestionJobsPager(watsonxDataService, params);
-        const allResults = await pager.getAll();
-        expect(allResults).not.toBeNull();
-        expect(allResults).toHaveLength(2);
+
+        const createIngestionJobsLocalFilesResult = watsonxDataService.createIngestionJobsLocalFiles(createIngestionJobsLocalFilesParams);
+
+        // all methods should return a Promise
+        expectToBePromise(createIngestionJobsLocalFilesResult);
+
+        // assert that create request was called
+        expect(createRequestMock).toHaveBeenCalledTimes(1);
+
+        const mockRequestOptions = getOptions(createRequestMock);
+
+        checkUrlAndMethod(mockRequestOptions, '/ingestion_jobs_local_files', 'POST');
+        const expectedAccept = 'application/json';
+        const expectedContentType = 'multipart/form-data';
+        checkMediaHeaders(createRequestMock, expectedAccept, expectedContentType);
+        checkUserHeader(createRequestMock, 'AuthInstanceId', authInstanceId);
+        expect(mockRequestOptions.formData.source_data_file.data).toEqual(sourceDataFile);
+        expect(mockRequestOptions.formData.source_data_file.contentType).toEqual(sourceDataFileContentType);
+        expect(mockRequestOptions.formData.target_table).toEqual(targetTable);
+        expect(mockRequestOptions.formData.job_id).toEqual(jobId);
+        expect(mockRequestOptions.formData.username).toEqual(username);
+        expect(mockRequestOptions.formData.source_file_type).toEqual(sourceFileType);
+        expect(mockRequestOptions.formData.csv_property).toEqual(csvProperty);
+        expect(mockRequestOptions.formData.create_if_not_exist).toEqual(createIfNotExist);
+        expect(mockRequestOptions.formData.validate_csv_header).toEqual(validateCsvHeader);
+        expect(mockRequestOptions.formData.execute_config).toEqual(executeConfig);
+        expect(mockRequestOptions.formData.engine_id).toEqual(engineId);
+      }
+
+      test('should pass the right params to createRequest with enable and disable retries', () => {
+        // baseline test
+        __createIngestionJobsLocalFilesTest();
+
+        // enable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.enableRetries();
+        __createIngestionJobsLocalFilesTest();
+
+        // disable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.disableRetries();
+        __createIngestionJobsLocalFilesTest();
+      });
+
+      test('should prioritize user-given headers', () => {
+        // parameters
+        const authInstanceId = 'testString';
+        const sourceDataFile = Buffer.from('This is a mock file.');
+        const targetTable = 'testString';
+        const jobId = 'testString';
+        const username = 'testString';
+        const userAccept = 'fake/accept';
+        const userContentType = 'fake/contentType';
+        const createIngestionJobsLocalFilesParams = {
+          authInstanceId,
+          sourceDataFile,
+          targetTable,
+          jobId,
+          username,
+          headers: {
+            Accept: userAccept,
+            'Content-Type': userContentType,
+          },
+        };
+
+        watsonxDataService.createIngestionJobsLocalFiles(createIngestionJobsLocalFilesParams);
+        checkMediaHeaders(createRequestMock, userAccept, userContentType);
+      });
+    });
+
+    describe('negative tests', () => {
+      test('should enforce required parameters', async () => {
+        let err;
+        try {
+          await watsonxDataService.createIngestionJobsLocalFiles({});
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
+      });
+
+      test('should reject promise when required params are not given', async () => {
+        let err;
+        try {
+          await watsonxDataService.createIngestionJobsLocalFiles();
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
+      });
+    });
+  });
+
+  describe('getIngestionJob', () => {
+    describe('positive tests', () => {
+      function __getIngestionJobTest() {
+        // Construct the params object for operation getIngestionJob
+        const jobId = 'testString';
+        const authInstanceId = 'testString';
+        const getIngestionJobParams = {
+          jobId,
+          authInstanceId,
+        };
+
+        const getIngestionJobResult = watsonxDataService.getIngestionJob(getIngestionJobParams);
+
+        // all methods should return a Promise
+        expectToBePromise(getIngestionJobResult);
+
+        // assert that create request was called
+        expect(createRequestMock).toHaveBeenCalledTimes(1);
+
+        const mockRequestOptions = getOptions(createRequestMock);
+
+        checkUrlAndMethod(mockRequestOptions, '/ingestion_jobs/{job_id}', 'GET');
+        const expectedAccept = 'application/json';
+        const expectedContentType = undefined;
+        checkMediaHeaders(createRequestMock, expectedAccept, expectedContentType);
+        checkUserHeader(createRequestMock, 'AuthInstanceId', authInstanceId);
+        expect(mockRequestOptions.path.job_id).toEqual(jobId);
+      }
+
+      test('should pass the right params to createRequest with enable and disable retries', () => {
+        // baseline test
+        __getIngestionJobTest();
+
+        // enable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.enableRetries();
+        __getIngestionJobTest();
+
+        // disable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.disableRetries();
+        __getIngestionJobTest();
+      });
+
+      test('should prioritize user-given headers', () => {
+        // parameters
+        const jobId = 'testString';
+        const authInstanceId = 'testString';
+        const userAccept = 'fake/accept';
+        const userContentType = 'fake/contentType';
+        const getIngestionJobParams = {
+          jobId,
+          authInstanceId,
+          headers: {
+            Accept: userAccept,
+            'Content-Type': userContentType,
+          },
+        };
+
+        watsonxDataService.getIngestionJob(getIngestionJobParams);
+        checkMediaHeaders(createRequestMock, userAccept, userContentType);
+      });
+    });
+
+    describe('negative tests', () => {
+      test('should enforce required parameters', async () => {
+        let err;
+        try {
+          await watsonxDataService.getIngestionJob({});
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
+      });
+
+      test('should reject promise when required params are not given', async () => {
+        let err;
+        try {
+          await watsonxDataService.getIngestionJob();
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
+      });
+    });
+  });
+
+  describe('deleteIngestionJobs', () => {
+    describe('positive tests', () => {
+      function __deleteIngestionJobsTest() {
+        // Construct the params object for operation deleteIngestionJobs
+        const jobId = 'testString';
+        const authInstanceId = 'testString';
+        const deleteIngestionJobsParams = {
+          jobId,
+          authInstanceId,
+        };
+
+        const deleteIngestionJobsResult = watsonxDataService.deleteIngestionJobs(deleteIngestionJobsParams);
+
+        // all methods should return a Promise
+        expectToBePromise(deleteIngestionJobsResult);
+
+        // assert that create request was called
+        expect(createRequestMock).toHaveBeenCalledTimes(1);
+
+        const mockRequestOptions = getOptions(createRequestMock);
+
+        checkUrlAndMethod(mockRequestOptions, '/ingestion_jobs/{job_id}', 'DELETE');
+        const expectedAccept = undefined;
+        const expectedContentType = undefined;
+        checkMediaHeaders(createRequestMock, expectedAccept, expectedContentType);
+        checkUserHeader(createRequestMock, 'AuthInstanceId', authInstanceId);
+        expect(mockRequestOptions.path.job_id).toEqual(jobId);
+      }
+
+      test('should pass the right params to createRequest with enable and disable retries', () => {
+        // baseline test
+        __deleteIngestionJobsTest();
+
+        // enable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.enableRetries();
+        __deleteIngestionJobsTest();
+
+        // disable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.disableRetries();
+        __deleteIngestionJobsTest();
+      });
+
+      test('should prioritize user-given headers', () => {
+        // parameters
+        const jobId = 'testString';
+        const authInstanceId = 'testString';
+        const userAccept = 'fake/accept';
+        const userContentType = 'fake/contentType';
+        const deleteIngestionJobsParams = {
+          jobId,
+          authInstanceId,
+          headers: {
+            Accept: userAccept,
+            'Content-Type': userContentType,
+          },
+        };
+
+        watsonxDataService.deleteIngestionJobs(deleteIngestionJobsParams);
+        checkMediaHeaders(createRequestMock, userAccept, userContentType);
+      });
+    });
+
+    describe('negative tests', () => {
+      test('should enforce required parameters', async () => {
+        let err;
+        try {
+          await watsonxDataService.deleteIngestionJobs({});
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
+      });
+
+      test('should reject promise when required params are not given', async () => {
+        let err;
+        try {
+          await watsonxDataService.deleteIngestionJobs();
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
+      });
+    });
+  });
+
+  describe('createPreviewIngestionFile', () => {
+    describe('positive tests', () => {
+      // Request models needed by this operation.
+
+      // PreviewIngestionFilePrototypeCsvProperty
+      const previewIngestionFilePrototypeCsvPropertyModel = {
+        encoding: 'utf-8',
+        escape_character: '\\\\',
+        field_delimiter: ',',
+        header: true,
+        line_delimiter: '\\n',
+      };
+
+      function __createPreviewIngestionFileTest() {
+        // Construct the params object for operation createPreviewIngestionFile
+        const authInstanceId = 'testString';
+        const sourceDataFiles = 's3://demobucket/data/yellow_tripdata_2022-01.parquet';
+        const csvProperty = previewIngestionFilePrototypeCsvPropertyModel;
+        const sourceFileType = 'csv';
+        const createPreviewIngestionFileParams = {
+          authInstanceId,
+          sourceDataFiles,
+          csvProperty,
+          sourceFileType,
+        };
+
+        const createPreviewIngestionFileResult = watsonxDataService.createPreviewIngestionFile(createPreviewIngestionFileParams);
+
+        // all methods should return a Promise
+        expectToBePromise(createPreviewIngestionFileResult);
+
+        // assert that create request was called
+        expect(createRequestMock).toHaveBeenCalledTimes(1);
+
+        const mockRequestOptions = getOptions(createRequestMock);
+
+        checkUrlAndMethod(mockRequestOptions, '/preview_ingestion_file', 'POST');
+        const expectedAccept = 'application/json';
+        const expectedContentType = 'application/json';
+        checkMediaHeaders(createRequestMock, expectedAccept, expectedContentType);
+        checkUserHeader(createRequestMock, 'AuthInstanceId', authInstanceId);
+        expect(mockRequestOptions.body.source_data_files).toEqual(sourceDataFiles);
+        expect(mockRequestOptions.body.csv_property).toEqual(csvProperty);
+        expect(mockRequestOptions.body.source_file_type).toEqual(sourceFileType);
+      }
+
+      test('should pass the right params to createRequest with enable and disable retries', () => {
+        // baseline test
+        __createPreviewIngestionFileTest();
+
+        // enable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.enableRetries();
+        __createPreviewIngestionFileTest();
+
+        // disable retries and test again
+        createRequestMock.mockClear();
+        watsonxDataService.disableRetries();
+        __createPreviewIngestionFileTest();
+      });
+
+      test('should prioritize user-given headers', () => {
+        // parameters
+        const authInstanceId = 'testString';
+        const sourceDataFiles = 's3://demobucket/data/yellow_tripdata_2022-01.parquet';
+        const userAccept = 'fake/accept';
+        const userContentType = 'fake/contentType';
+        const createPreviewIngestionFileParams = {
+          authInstanceId,
+          sourceDataFiles,
+          headers: {
+            Accept: userAccept,
+            'Content-Type': userContentType,
+          },
+        };
+
+        watsonxDataService.createPreviewIngestionFile(createPreviewIngestionFileParams);
+        checkMediaHeaders(createRequestMock, userAccept, userContentType);
+      });
+    });
+
+    describe('negative tests', () => {
+      test('should enforce required parameters', async () => {
+        let err;
+        try {
+          await watsonxDataService.createPreviewIngestionFile({});
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
+      });
+
+      test('should reject promise when required params are not given', async () => {
+        let err;
+        try {
+          await watsonxDataService.createPreviewIngestionFile();
+        } catch (e) {
+          err = e;
+        }
+
+        expect(err.message).toMatch(/Missing required parameters/);
       });
     });
   });

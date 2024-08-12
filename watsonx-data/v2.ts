@@ -18,9 +18,6 @@
  * IBM OpenAPI SDK Code Generator Version: 3.93.0-c40121e6-20240729-182103
  */
 
-/* eslint-disable max-classes-per-file */
-/* eslint-disable no-await-in-loop */
-
 import * as extend from 'extend';
 import { IncomingHttpHeaders, OutgoingHttpHeaders } from 'http';
 import {
@@ -28,7 +25,6 @@ import {
   BaseService,
   UserOptions,
   getAuthenticatorFromEnvironment,
-  getQueryParam,
   validateParams,
 } from 'ibm-cloud-sdk-core';
 import { getSdkHeaders } from '../lib/common';
@@ -5345,7 +5341,7 @@ class WatsonxDataV2 extends BaseService {
    *
    * @param {Object} params - The parameters to send to the service.
    * @param {string} params.authInstanceId - watsonx.data instance ID.
-   * @param {string} [params.start] - Page number of requested ingestion jobs.
+   * @param {number} [params.page] - Page number of requested ingestion jobs.
    * @param {number} [params.jobsPerPage] - Number of requested ingestion jobs.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJobCollection>>}
@@ -5355,14 +5351,14 @@ class WatsonxDataV2 extends BaseService {
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJobCollection>> {
     const _params = { ...params };
     const _requiredParams = ['authInstanceId'];
-    const _validParams = ['authInstanceId', 'start', 'jobsPerPage', 'headers'];
+    const _validParams = ['authInstanceId', 'page', 'jobsPerPage', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
     }
 
     const query = {
-      'start': _params.start,
+      'page': _params.page,
       'jobs_per_page': _params.jobsPerPage,
     };
 
@@ -5380,6 +5376,308 @@ class WatsonxDataV2 extends BaseService {
           sdkHeaders,
           {
             'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Create an ingestion job.
+   *
+   * Create an ingestion job.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.authInstanceId - watsonx.data instance ID.
+   * @param {string} params.jobId - Job ID of the job.
+   * @param {string} params.sourceDataFiles - Comma separated source file or directory path.
+   * @param {string} params.targetTable - Target table name in format catalog.schema.table.
+   * @param {string} params.username - User submitting ingestion job.
+   * @param {boolean} [params.createIfNotExist] - Create new target table (if True); Insert into pre-existing target
+   * table (if False).
+   * @param {IngestionJobPrototypeCsvProperty} [params.csvProperty] - Ingestion CSV properties.
+   * @param {string} [params.engineId] - ID of the spark engine to be used for ingestion.
+   * @param {IngestionJobPrototypeExecuteConfig} [params.executeConfig] - Ingestion engine configuration.
+   * @param {string} [params.partitionBy] - Partition by expression of the target table.
+   * @param {string} [params.schema] - Schema definition of the source table.
+   * @param {string} [params.sourceFileType] - Source file types (parquet or csv or json).
+   * @param {boolean} [params.validateCsvHeader] - Validate CSV header if the target table exist.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJob>>}
+   */
+  public createIngestionJobs(
+    params: WatsonxDataV2.CreateIngestionJobsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJob>> {
+    const _params = { ...params };
+    const _requiredParams = ['authInstanceId', 'jobId', 'sourceDataFiles', 'targetTable', 'username'];
+    const _validParams = ['authInstanceId', 'jobId', 'sourceDataFiles', 'targetTable', 'username', 'createIfNotExist', 'csvProperty', 'engineId', 'executeConfig', 'partitionBy', 'schema', 'sourceFileType', 'validateCsvHeader', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'job_id': _params.jobId,
+      'source_data_files': _params.sourceDataFiles,
+      'target_table': _params.targetTable,
+      'username': _params.username,
+      'create_if_not_exist': _params.createIfNotExist,
+      'csv_property': _params.csvProperty,
+      'engine_id': _params.engineId,
+      'execute_config': _params.executeConfig,
+      'partition_by': _params.partitionBy,
+      'schema': _params.schema,
+      'source_file_type': _params.sourceFileType,
+      'validate_csv_header': _params.validateCsvHeader,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createIngestionJobs');
+
+    const parameters = {
+      options: {
+        url: '/ingestion_jobs',
+        method: 'POST',
+        body,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Create an ingestion job for user local files.
+   *
+   * Create an ingestion job for user local files.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.authInstanceId - watsonx.data instance ID.
+   * @param {NodeJS.ReadableStream | Buffer} params.sourceDataFile - The user local file submitted for ingestion.
+   * @param {string} params.targetTable - Target table name in format catalog.schema.table.
+   * @param {string} params.jobId - Job ID of the job.
+   * @param {string} params.username - User submitting ingestion job.
+   * @param {string} [params.sourceDataFileContentType] - The content type of sourceDataFile.
+   * @param {string} [params.sourceFileType] - File format of source file.
+   * @param {string} [params.csvProperty] - Ingestion CSV properties (base64 encoding of a stringifed json).
+   * @param {boolean} [params.createIfNotExist] - Create new target table (if true); Insert into pre-existing target
+   * table (if false).
+   * @param {boolean} [params.validateCsvHeader] - Validate CSV header if the target table exist.
+   * @param {string} [params.executeConfig] - Ingestion engine configuration (base64 encoding of a stringifed json).
+   * @param {string} [params.engineId] - ID of the spark engine to be used for ingestion.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJob>>}
+   */
+  public createIngestionJobsLocalFiles(
+    params: WatsonxDataV2.CreateIngestionJobsLocalFilesParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJob>> {
+    const _params = { ...params };
+    const _requiredParams = ['authInstanceId', 'sourceDataFile', 'targetTable', 'jobId', 'username'];
+    const _validParams = ['authInstanceId', 'sourceDataFile', 'targetTable', 'jobId', 'username', 'sourceDataFileContentType', 'sourceFileType', 'csvProperty', 'createIfNotExist', 'validateCsvHeader', 'executeConfig', 'engineId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const formData = {
+      'source_data_file': {
+        data: _params.sourceDataFile,
+        contentType: _params.sourceDataFileContentType,
+      },
+      'target_table': _params.targetTable,
+      'job_id': _params.jobId,
+      'username': _params.username,
+      'source_file_type': _params.sourceFileType,
+      'csv_property': _params.csvProperty,
+      'create_if_not_exist': _params.createIfNotExist,
+      'validate_csv_header': _params.validateCsvHeader,
+      'execute_config': _params.executeConfig,
+      'engine_id': _params.engineId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createIngestionJobsLocalFiles');
+
+    const parameters = {
+      options: {
+        url: '/ingestion_jobs_local_files',
+        method: 'POST',
+        formData
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get ingestion job.
+   *
+   * Get a submitted ingestion job.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.jobId - ingestion job id.
+   * @param {string} params.authInstanceId - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJob>>}
+   */
+  public getIngestionJob(
+    params: WatsonxDataV2.GetIngestionJobParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJob>> {
+    const _params = { ...params };
+    const _requiredParams = ['jobId', 'authInstanceId'];
+    const _validParams = ['jobId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'job_id': _params.jobId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getIngestionJob');
+
+    const parameters = {
+      options: {
+        url: '/ingestion_jobs/{job_id}',
+        method: 'GET',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Delete an ingestion job.
+   *
+   * Delete an ingestion job.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.jobId - ingestion job id.
+   * @param {string} params.authInstanceId - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
+   */
+  public deleteIngestionJobs(
+    params: WatsonxDataV2.DeleteIngestionJobsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
+    const _params = { ...params };
+    const _requiredParams = ['jobId', 'authInstanceId'];
+    const _validParams = ['jobId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'job_id': _params.jobId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'deleteIngestionJobs');
+
+    const parameters = {
+      options: {
+        url: '/ingestion_jobs/{job_id}',
+        method: 'DELETE',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Generate a preview of source file(s).
+   *
+   * Generate a preview of source file(s).
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.authInstanceId - watsonx.data instance ID.
+   * @param {string} params.sourceDataFiles - Comma separated source file or directory path.
+   * @param {PreviewIngestionFilePrototypeCsvProperty} [params.csvProperty] - CSV properties of source file(s).
+   * @param {string} [params.sourceFileType] - File format of source file(s).
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.PreviewIngestionFile>>}
+   */
+  public createPreviewIngestionFile(
+    params: WatsonxDataV2.CreatePreviewIngestionFileParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.PreviewIngestionFile>> {
+    const _params = { ...params };
+    const _requiredParams = ['authInstanceId', 'sourceDataFiles'];
+    const _validParams = ['authInstanceId', 'sourceDataFiles', 'csvProperty', 'sourceFileType', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'source_data_files': _params.sourceDataFiles,
+      'csv_property': _params.csvProperty,
+      'source_file_type': _params.sourceFileType,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createPreviewIngestionFile');
+
+    const parameters = {
+      options: {
+        url: '/preview_ingestion_file',
+        method: 'POST',
+        body,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
             'AuthInstanceId': _params.authInstanceId,
           },
           _params.headers
@@ -6720,10 +7018,131 @@ namespace WatsonxDataV2 {
     /** watsonx.data instance ID. */
     authInstanceId: string;
     /** Page number of requested ingestion jobs. */
-    start?: string;
+    page?: number;
     /** Number of requested ingestion jobs. */
     jobsPerPage?: number;
     headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createIngestionJobs` operation. */
+  export interface CreateIngestionJobsParams {
+    /** watsonx.data instance ID. */
+    authInstanceId: string;
+    /** Job ID of the job. */
+    jobId: string;
+    /** Comma separated source file or directory path. */
+    sourceDataFiles: string;
+    /** Target table name in format catalog.schema.table. */
+    targetTable: string;
+    /** User submitting ingestion job. */
+    username: string;
+    /** Create new target table (if True); Insert into pre-existing target table (if False). */
+    createIfNotExist?: boolean;
+    /** Ingestion CSV properties. */
+    csvProperty?: IngestionJobPrototypeCsvProperty;
+    /** ID of the spark engine to be used for ingestion. */
+    engineId?: string;
+    /** Ingestion engine configuration. */
+    executeConfig?: IngestionJobPrototypeExecuteConfig;
+    /** Partition by expression of the target table. */
+    partitionBy?: string;
+    /** Schema definition of the source table. */
+    schema?: string;
+    /** Source file types (parquet or csv or json). */
+    sourceFileType?: CreateIngestionJobsConstants.SourceFileType | string;
+    /** Validate CSV header if the target table exist. */
+    validateCsvHeader?: boolean;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Constants for the `createIngestionJobs` operation. */
+  export namespace CreateIngestionJobsConstants {
+    /** Source file types (parquet or csv or json). */
+    export enum SourceFileType {
+      CSV = 'csv',
+      PARQUET = 'parquet',
+      JSON = 'json',
+    }
+  }
+
+  /** Parameters for the `createIngestionJobsLocalFiles` operation. */
+  export interface CreateIngestionJobsLocalFilesParams {
+    /** watsonx.data instance ID. */
+    authInstanceId: string;
+    /** The user local file submitted for ingestion. */
+    sourceDataFile: NodeJS.ReadableStream | Buffer;
+    /** Target table name in format catalog.schema.table. */
+    targetTable: string;
+    /** Job ID of the job. */
+    jobId: string;
+    /** User submitting ingestion job. */
+    username: string;
+    /** The content type of sourceDataFile. */
+    sourceDataFileContentType?: string;
+    /** File format of source file. */
+    sourceFileType?: CreateIngestionJobsLocalFilesConstants.SourceFileType | string;
+    /** Ingestion CSV properties (base64 encoding of a stringifed json). */
+    csvProperty?: string;
+    /** Create new target table (if true); Insert into pre-existing target table (if false). */
+    createIfNotExist?: boolean;
+    /** Validate CSV header if the target table exist. */
+    validateCsvHeader?: boolean;
+    /** Ingestion engine configuration (base64 encoding of a stringifed json). */
+    executeConfig?: string;
+    /** ID of the spark engine to be used for ingestion. */
+    engineId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Constants for the `createIngestionJobsLocalFiles` operation. */
+  export namespace CreateIngestionJobsLocalFilesConstants {
+    /** File format of source file. */
+    export enum SourceFileType {
+      CSV = 'csv',
+      PARQUET = 'parquet',
+      JSON = 'json',
+    }
+  }
+
+  /** Parameters for the `getIngestionJob` operation. */
+  export interface GetIngestionJobParams {
+    /** ingestion job id. */
+    jobId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `deleteIngestionJobs` operation. */
+  export interface DeleteIngestionJobsParams {
+    /** ingestion job id. */
+    jobId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createPreviewIngestionFile` operation. */
+  export interface CreatePreviewIngestionFileParams {
+    /** watsonx.data instance ID. */
+    authInstanceId: string;
+    /** Comma separated source file or directory path. */
+    sourceDataFiles: string;
+    /** CSV properties of source file(s). */
+    csvProperty?: PreviewIngestionFilePrototypeCsvProperty;
+    /** File format of source file(s). */
+    sourceFileType?: CreatePreviewIngestionFileConstants.SourceFileType | string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Constants for the `createPreviewIngestionFile` operation. */
+  export namespace CreatePreviewIngestionFileConstants {
+    /** File format of source file(s). */
+    export enum SourceFileType {
+      CSV = 'csv',
+      PARQUET = 'parquet',
+      JSON = 'json',
+    }
   }
 
   /*************************
@@ -7329,6 +7748,38 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * Ingestion CSV properties.
+   */
+  export interface IngestionJobPrototypeCsvProperty {
+    /** Encoding used in CSV file. */
+    encoding?: string;
+    /** Escape character of CSV file. */
+    escape_character?: string;
+    /** Field delimiter of CSV file. */
+    field_delimiter?: string;
+    /** Identify if header exists in CSV file. */
+    header?: boolean;
+    /** Line delimiter of CSV file. */
+    line_delimiter?: string;
+  }
+
+  /**
+   * Ingestion engine configuration.
+   */
+  export interface IngestionJobPrototypeExecuteConfig {
+    /** Driver core(s) configuration for Spark engine. */
+    driver_cores?: number;
+    /** Driver memory configuration (in GB) for Spark engine. */
+    driver_memory?: string;
+    /** Executor core(s) configuration for Spark engine. */
+    executor_cores?: number;
+    /** Executor memory configuration (in GB) for Spark engine. */
+    executor_memory?: string;
+    /** Number of executors to assign for Spark engine. */
+    num_executors?: number;
+  }
+
+  /**
    * GetSchemas OK.
    */
   export interface ListSchemasOKBody {
@@ -7873,6 +8324,62 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * Schema of the data in the source file.
+   */
+  export interface PreviewIngestionFile {
+    /** Array of column names of the table. */
+    column_names: string[];
+    /** Array of column types of the table. */
+    column_types: string[];
+    /** Name of the file being previewed. */
+    file_name: string;
+    /** First 10 rows of the table. */
+    rows: PreviewIngestionFileRows;
+  }
+
+  /**
+   * CSV properties of source file(s).
+   */
+  export interface PreviewIngestionFilePrototypeCsvProperty {
+    /** Encoding used in CSV file. */
+    encoding?: string;
+    /** Escape character of CSV file. */
+    escape_character?: string;
+    /** Field delimiter of CSV file. */
+    field_delimiter?: string;
+    /** Identify if header exists in CSV file. */
+    header?: boolean;
+    /** Line delimiter of CSV file. */
+    line_delimiter?: string;
+  }
+
+  /**
+   * First 10 rows of the table.
+   */
+  export interface PreviewIngestionFileRows {
+    /** Each rows slice. */
+    row_eight?: string[];
+    /** Each rows slice. */
+    row_five?: string[];
+    /** Each rows slice. */
+    row_four?: string[];
+    /** Each rows slice. */
+    row_nine?: string[];
+    /** Each rows slice. */
+    row_one?: string[];
+    /** Each rows slice. */
+    row_seven?: string[];
+    /** Each rows slice. */
+    row_six?: string[];
+    /** Each rows slice. */
+    row_ten?: string[];
+    /** Each rows slice. */
+    row_three?: string[];
+    /** Each rows slice. */
+    row_two?: string[];
+  }
+
+  /**
    * RemoveEngine properties.
    */
   export interface RemoveEngineProperties {
@@ -8371,91 +8878,6 @@ namespace WatsonxDataV2 {
   export interface UpdateSyncCatalogOKBody {
     /** Response of success. */
     response?: SuccessResponse;
-  }
-
-  /*************************
-   * pager classes
-   ************************/
-
-  /**
-   * IngestionJobsPager can be used to simplify the use of listIngestionJobs().
-   */
-  export class IngestionJobsPager {
-    protected _hasNext: boolean;
-
-    protected pageContext: any;
-
-    protected client: WatsonxDataV2;
-
-    protected params: WatsonxDataV2.ListIngestionJobsParams;
-
-    /**
-     * Construct a IngestionJobsPager object.
-     *
-     * @param {WatsonxDataV2}  client - The service client instance used to invoke listIngestionJobs()
-     * @param {Object} params - The parameters to be passed to listIngestionJobs()
-     * @constructor
-     * @returns {IngestionJobsPager}
-     */
-    constructor(client: WatsonxDataV2, params: WatsonxDataV2.ListIngestionJobsParams) {
-      if (params && params.start) {
-        throw new Error(`the params.start field should not be set`);
-      }
-
-      this._hasNext = true;
-      this.pageContext = { next: undefined };
-      this.client = client;
-      this.params = JSON.parse(JSON.stringify(params || {}));
-    }
-
-    /**
-     * Returns true if there are potentially more results to be retrieved by invoking getNext().
-     * @returns {boolean}
-     */
-    public hasNext(): boolean {
-      return this._hasNext;
-    }
-
-    /**
-     * Returns the next page of results by invoking listIngestionJobs().
-     * @returns {Promise<WatsonxDataV2.IngestionJob[]>}
-     */
-    public async getNext(): Promise<WatsonxDataV2.IngestionJob[]> {
-      if (!this.hasNext()) {
-        throw new Error('No more results available');
-      }
-
-      if (this.pageContext.next) {
-        this.params.start = this.pageContext.next;
-      }
-      const response = await this.client.listIngestionJobs(this.params);
-      const { result } = response;
-
-      let next;
-      if (result && result.next) {
-        if (result.next.href) {
-          next = getQueryParam(result.next.href, 'start');
-        }
-      }
-      this.pageContext.next = next;
-      if (!this.pageContext.next) {
-        this._hasNext = false;
-      }
-      return result.ingestion_jobs;
-    }
-
-    /**
-     * Returns all results by invoking listIngestionJobs() repeatedly until all pages of results have been retrieved.
-     * @returns {Promise<WatsonxDataV2.IngestionJob[]>}
-     */
-    public async getAll(): Promise<WatsonxDataV2.IngestionJob[]> {
-      const results: IngestionJob[] = [];
-      while (this.hasNext()) {
-        const nextPage = await this.getNext();
-        results.push(...nextPage);
-      }
-      return results;
-    }
   }
 }
 
