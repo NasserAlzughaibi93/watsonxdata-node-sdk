@@ -15,6 +15,7 @@
  */
 
 /* eslint-disable no-console */
+/* eslint-disable no-await-in-loop */
 
 const { readExternalSources } = require('ibm-cloud-sdk-core');
 const WatsonxDataV2 = require('../../dist/watsonx-data/v2');
@@ -59,14 +60,6 @@ describe('WatsonxDataV2_integration', () => {
   test('createBucketRegistration()', async () => {
     // Request models needed by this operation.
 
-    // BucketDetails
-    const bucketDetailsModel = {
-      access_key: 'b9cbf248ea5c4c96947e64407108559j',
-      bucket_name: 'sample-bucket',
-      endpoint: 'https://s3.<region>.cloud-object-storage.appdomain.cloud/',
-      secret_key: '13b4045cac1a0be54c9fjbe53cb22df5fn397cd2c45b66c87',
-    };
-
     // BucketCatalog
     const bucketCatalogModel = {
       catalog_name: 'sampleCatalog',
@@ -74,14 +67,39 @@ describe('WatsonxDataV2_integration', () => {
       catalog_type: 'iceberg',
     };
 
+    // BucketDetails
+    const bucketDetailsModel = {
+      access_key: 'b9cbf248ea5c4c96947e64407108559j',
+      bucket_name: 'sample-bucket',
+      endpoint: 'https://s3.<region>.cloud-object-storage.appdomain.cloud/',
+      key_file: 'key_file',
+      provider: 'ibm_cos',
+      region: 'us-south',
+      secret_key: '13b4045cac1a0be54c9fjbe53cb22df5fn397cd2c45b66c87',
+    };
+
+    // StorageDetails
+    const storageDetailsModel = {
+      access_key: '<access_key>',
+      application_id: '<application_id>',
+      auth_mode: '<account_key/sas/service_principle>',
+      container_name: 'sample-container',
+      directory_id: '<directory_id>',
+      endpoint: 'abfss://<container_name>@<storage_account_name>.dfs.core.windows.net/',
+      sas_token: '<sas_token>',
+      secret_key: 'secret_key',
+      storage_account_name: 'sample-storage',
+    };
+
     const params = {
-      bucketDetails: bucketDetailsModel,
       bucketType: 'ibm_cos',
       description: 'COS bucket for customer data',
       managedBy: 'ibm',
       associatedCatalog: bucketCatalogModel,
+      bucketDetails: bucketDetailsModel,
       bucketDisplayName: 'sample-bucket-displayname',
       region: 'us-south',
+      storageDetails: storageDetailsModel,
       tags: ['bucket-tag1', 'bucket-tag2'],
       authInstanceId: 'testString',
     };
@@ -112,6 +130,9 @@ describe('WatsonxDataV2_integration', () => {
       access_key: 'b9cbf248ea5c4c96947e64407108559j',
       bucket_name: 'sample-bucket',
       endpoint: 'https://s3.<region>.cloud-object-storage.appdomain.cloud/',
+      key_file: 'key_file',
+      provider: 'ibm_cos',
+      region: 'us-south',
       secret_key: '13b4045cac1a0be54c9fjbe53cb22df5fn397cd2c45b66c87',
     };
 
@@ -146,11 +167,62 @@ describe('WatsonxDataV2_integration', () => {
     const params = {
       bucketId: 'testString',
       authInstanceId: 'testString',
+      path: 'testString',
     };
 
     const res = await watsonxDataService.listBucketObjects(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getBucketObjectProperties()', async () => {
+    // Request models needed by this operation.
+
+    // Path
+    const pathModel = {
+      path: 'string',
+    };
+
+    const params = {
+      bucketId: 'testString',
+      paths: [pathModel],
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getBucketObjectProperties(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createHdfsStorage()', async () => {
+    const params = {
+      bucketDisplayName: 'testString',
+      bucketType: 'testString',
+      hmsThriftUri: 'testString',
+      hmsThriftPort: 1,
+      coreSite: 'testString',
+      hdfsSite: 'testString',
+      kerberos: 'testString',
+      catalogName: 'testString',
+      catalogType: 'testString',
+      krb5Config: 'testString',
+      hiveKeytab: Buffer.from('This is a mock file.'),
+      hiveKeytabContentType: 'testString',
+      hdfsKeytab: Buffer.from('This is a mock file.'),
+      hdfsKeytabContentType: 'testString',
+      hiveServerPrincipal: 'testString',
+      hiveClientPrincipal: 'testString',
+      hdfsPrincipal: 'testString',
+      description: 'testString',
+      createdOn: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createHdfsStorage(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
     expect(res.result).toBeDefined();
   });
 
@@ -177,19 +249,42 @@ describe('WatsonxDataV2_integration', () => {
 
     // DatabaseDetails
     const databaseDetailsModel = {
+      authentication_type: 'LDAP',
+      broker_authentication_password: 'samplepassword',
+      broker_authentication_type: 'PASSWORD',
+      broker_authentication_user: 'sampleuser',
       certificate: 'contents of a pem/crt file',
       certificate_extension: 'pem/crt',
+      connection_method: 'basic, apikey',
+      connection_mode: 'service_name',
+      connection_mode_value: 'orclpdb',
+      connection_type: 'JDBC, Arrow flight',
+      controller_authentication_password: 'samplepassword',
+      controller_authentication_type: 'PASSWORD',
+      controller_authentication_user: 'sampleuser',
+      cpd_hostname: 'samplecpdhostname',
+      credentials_key: 'eyJ0eXBlIjoic2VydmljZV9hY2NvdW50IiwicHJvamVjdF9pZCI6ImNvbm9wcy1iaWdxdWVyeSIsInByaXZhdGVfa2V5X2lkIjoiMGY3......',
       database_name: 'new_database',
       hostname: 'db2@<hostname>.com',
       hostname_in_certificate: 'samplehostname',
       hosts: 'abc.com:1234,xyz.com:4321',
+      informix_server: 'ol_informix1410',
       password: 'samplepassword',
       port: 4553,
+      project_id: 'conops-bigquery',
       sasl: true,
+      service_api_key: 'sampleapikey',
+      service_hostname: 'api.dataplatform.dev.cloud.ibm.com',
+      service_password: 'samplepassword',
+      service_port: 443,
+      service_ssl: true,
+      service_token_url: 'sampletoakenurl',
+      service_username: 'sampleusername',
       ssl: true,
       tables: 'kafka_table_name',
       username: 'sampleuser',
       validate_server_certificate: true,
+      verify_host_name: true,
     };
 
     // DatabaseRegistrationPrototypeDatabasePropertiesItems
@@ -238,16 +333,65 @@ describe('WatsonxDataV2_integration', () => {
       username: 'sampleuser',
     };
 
+    // DatabaseRegistrationPatchTopicsItems
+    const databaseRegistrationPatchTopicsItemsModel = {
+      created_on: '1686792721',
+      file_contents: 'sample file contents',
+      file_name: 'sample file name',
+      topic_name: 'customer',
+    };
+
     const params = {
       databaseId: 'testString',
       databaseDetails: databaseRegistrationPatchDatabaseDetailsModel,
       databaseDisplayName: 'new_database',
       description: 'External database description',
       tags: ['testdatabase', 'userdatabase'],
+      topics: [databaseRegistrationPatchTopicsItemsModel],
       authInstanceId: 'testString',
     };
 
     const res = await watsonxDataService.updateDatabase(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('listDriverRegistration()', async () => {
+    const params = {
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.listDriverRegistration(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createDriverRegistration()', async () => {
+    const params = {
+      driver: Buffer.from('This is a mock file.'),
+      driverName: 'testString',
+      connectionType: 'testString',
+      driverContentType: 'testString',
+      version: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createDriverRegistration(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('updateDriverEngines()', async () => {
+    const params = {
+      driverId: 'testString',
+      engines: ['testString'],
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.updateDriverEngines(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(200);
     expect(res.result).toBeDefined();
@@ -279,13 +423,77 @@ describe('WatsonxDataV2_integration', () => {
       description: 'external engine description',
       origin: 'external',
       tags: ['tag1', 'tag2'],
-      type: 'netezza',
       authInstanceId: 'testString',
     };
 
     const res = await watsonxDataService.createOtherEngine(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('listAllIntegrations()', async () => {
+    const params = {
+      authInstanceId: 'testString',
+      secret: 'testString',
+      serviceType: 'testString',
+      state: ['testString'],
+    };
+
+    const res = await watsonxDataService.listAllIntegrations(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createIntegration()', async () => {
+    const params = {
+      apikey: 'testString',
+      enableDataPolicyWithinWxd: false,
+      password: 'password',
+      resource: 'resource_name',
+      serviceType: 'ranger',
+      storageCatalogs: ['testString'],
+      url: 'http://abcd.efgh.com:9876/',
+      username: 'username',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createIntegration(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getIntegrations()', async () => {
+    const params = {
+      integrationId: 'testString',
+      authInstanceId: 'testString',
+      secret: 'testString',
+    };
+
+    const res = await watsonxDataService.getIntegrations(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('updateIntegration()', async () => {
+    const params = {
+      integrationId: 'testString',
+      apikey: 'testString',
+      enableDataPolicyWithinWxd: true,
+      password: 'testString',
+      resource: 'resource_name',
+      storageCatalogs: ['testString'],
+      url: 'http://abcd.efgh.com:9876/',
+      username: 'username',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.updateIntegration(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
     expect(res.result).toBeDefined();
   });
 
@@ -384,6 +592,21 @@ describe('WatsonxDataV2_integration', () => {
     const res = await watsonxDataService.updateNetezzaEngine(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createExecuteQuery()', async () => {
+    const params = {
+      engineId: 'testString',
+      sqlString: 'select expenses from expenditure',
+      catalogName: 'sampleCatalog',
+      schemaName: 'SampleSchema1',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createExecuteQuery(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
     expect(res.result).toBeDefined();
   });
 
@@ -511,11 +734,16 @@ describe('WatsonxDataV2_integration', () => {
       worker: ['testString'],
     };
 
+    // RemoveEnginePropertiesPrestissimoOaiGenJvm
+    const removeEnginePropertiesPrestissimoOaiGenJvmModel = {
+      coordinator: ['testString'],
+    };
+
     // RemoveEngineProperties
     const removeEnginePropertiesModel = {
       catalog: prestissimoEnginePropertiesCatalogModel,
       configuration: removeEnginePropertiesConfigurationModel,
-      jvm: removeEnginePropertiesConfigurationModel,
+      jvm: removeEnginePropertiesPrestissimoOaiGenJvmModel,
       velox: ['testString'],
     };
 
@@ -548,14 +776,14 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
-  test('addPrestissimoEngineCatalogs()', async () => {
+  test('createPrestissimoEngineCatalogs()', async () => {
     const params = {
       engineId: 'testString',
-      catalogNames: 'testString',
+      catalogName: 'testString',
       authInstanceId: 'testString',
     };
 
-    const res = await watsonxDataService.addPrestissimoEngineCatalogs(params);
+    const res = await watsonxDataService.createPrestissimoEngineCatalogs(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(201);
     expect(res.result).toBeDefined();
@@ -742,6 +970,11 @@ describe('WatsonxDataV2_integration', () => {
       worker: nodeDescriptionBodyModel,
     };
 
+    // PrestoEnginePropertiesEventListener
+    const prestoEnginePropertiesEventListenerModel = {
+      event_listener_property: 'testString',
+    };
+
     // PrestoEnginePropertiesGlobal
     const prestoEnginePropertiesGlobalModel = {
       global_property: 'enable-mixed-case-support:true',
@@ -753,12 +986,20 @@ describe('WatsonxDataV2_integration', () => {
       worker: nodeDescriptionBodyModel,
     };
 
+    // EnginePropertiesLogConfiguration
+    const enginePropertiesLogConfigurationModel = {
+      coordinator: nodeDescriptionBodyModel,
+      worker: nodeDescriptionBodyModel,
+    };
+
     // PrestoEngineEngineProperties
     const prestoEngineEnginePropertiesModel = {
       catalog: prestoEnginePropertiesCatalogModel,
       configuration: enginePropertiesOaiGen1ConfigurationModel,
+      event_listener: prestoEnginePropertiesEventListenerModel,
       global: prestoEnginePropertiesGlobalModel,
       jvm: enginePropertiesOaiGen1JvmModel,
+      log_config: enginePropertiesLogConfigurationModel,
     };
 
     // RemoveEnginePropertiesOaiGenConfiguration
@@ -775,9 +1016,10 @@ describe('WatsonxDataV2_integration', () => {
 
     // PrestoEnginePatchRemoveEngineProperties
     const prestoEnginePatchRemoveEnginePropertiesModel = {
+      catalog: prestoEnginePropertiesCatalogModel,
       configuration: removeEnginePropertiesOaiGenConfigurationModel,
       jvm: removeEnginePropertiesOaiGenJvmModel,
-      catalog: prestoEnginePropertiesCatalogModel,
+      event_listener: [],
     };
 
     const params = {
@@ -809,14 +1051,14 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
-  test('addPrestoEngineCatalogs()', async () => {
+  test('createPrestoEngineCatalogs()', async () => {
     const params = {
       engineId: 'testString',
-      catalogNames: 'testString',
+      catalogName: 'testString',
       authInstanceId: 'testString',
     };
 
-    const res = await watsonxDataService.addPrestoEngineCatalogs(params);
+    const res = await watsonxDataService.createPrestoEngineCatalogs(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(201);
     expect(res.result).toBeDefined();
@@ -919,6 +1161,301 @@ describe('WatsonxDataV2_integration', () => {
     const res = await watsonxDataService.scalePrestoEngine(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(202);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegration()', async () => {
+    const params = {
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegration(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createSalIntegration()', async () => {
+    const params = {
+      apikey: '12efd3raq',
+      engineId: 'presto-01',
+      storageResourceCrn: 'crn:v1:staging:public:cloud-object-storage:global:a/a7026b374f39f570d20984c1ac6ecf63:5778e94f-c8c7-46a8-9878-d5eeadb51161',
+      storageType: 'bmcos_object_storage',
+      trialPlan: true,
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createSalIntegration(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('updateSalIntegration()', async () => {
+    const params = {
+      op: 'add',
+      path: 'storage',
+      value: 'new-apikey',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.updateSalIntegration(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createSalIntegrationEnrichment()', async () => {
+    // Request models needed by this operation.
+
+    // EnrichmentObj
+    const enrichmentObjModel = {
+      catalog: 'iceberg_data',
+      operation: 'create',
+      schema: 'testString',
+      tables: ['testString'],
+    };
+
+    const params = {
+      enrichmentPrototype: enrichmentObjModel,
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createSalIntegrationEnrichment(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(204);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationEnrichmentAssets()', async () => {
+    const params = {
+      projectId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationEnrichmentAssets(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationEnrichmentDataAsset()', async () => {
+    const params = {
+      projectId: 'testString',
+      assetId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationEnrichmentDataAsset(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationEnrichmentJobRunLogs()', async () => {
+    const params = {
+      jobId: 'testString',
+      jobRunId: 'testString',
+      projectId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationEnrichmentJobRunLogs(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationEnrichmentJobRuns()', async () => {
+    const params = {
+      jobId: 'testString',
+      projectId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationEnrichmentJobRuns(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationEnrichmentJobs()', async () => {
+    const params = {
+      wkcProjectId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationEnrichmentJobs(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationGlossaryTerms()', async () => {
+    const params = {
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationGlossaryTerms(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationMappings()', async () => {
+    const params = {
+      catalogName: 'testString',
+      schemaName: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationMappings(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationEnrichmentGlobalSettings()', async () => {
+    const params = {
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationEnrichmentGlobalSettings(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createSalIntegrationEnrichmentGlobalSettings()', async () => {
+    // Request models needed by this operation.
+
+    // SalIntegrationEnrichmentSettingsSemanticExpansionDescriptionGenerationConfiguration
+    const salIntegrationEnrichmentSettingsSemanticExpansionDescriptionGenerationConfigurationModel = {
+      assignment_threshold: 0.14,
+      suggestion_threshold: 0.9,
+    };
+
+    // SalIntegrationEnrichmentSettingsSemanticExpansionNameExpansionConfiguration
+    const salIntegrationEnrichmentSettingsSemanticExpansionNameExpansionConfigurationModel = {
+      assignment_threshold: 0.1,
+      suggestion_threshold: 0.1,
+    };
+
+    // SalIntegrationEnrichmentSettingsSemanticExpansion
+    const salIntegrationEnrichmentSettingsSemanticExpansionModel = {
+      description_generation: true,
+      description_generation_configuration: salIntegrationEnrichmentSettingsSemanticExpansionDescriptionGenerationConfigurationModel,
+      name_expansion: true,
+      name_expansion_configuration: salIntegrationEnrichmentSettingsSemanticExpansionNameExpansionConfigurationModel,
+    };
+
+    // SalIntegrationEnrichmentSettingsTermAssignment
+    const salIntegrationEnrichmentSettingsTermAssignmentModel = {
+      class_based_assignments: false,
+      evaluate_negative_assignments: false,
+      llm_based_assignments: false,
+      ml_based_assignments_custom: false,
+      ml_based_assignments_default: false,
+      name_matching: false,
+      term_assignment_threshold: 0.3,
+      term_suggestion_threshold: 0.4,
+    };
+
+    const params = {
+      semanticExpansion: salIntegrationEnrichmentSettingsSemanticExpansionModel,
+      termAssignment: salIntegrationEnrichmentSettingsTermAssignmentModel,
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createSalIntegrationEnrichmentGlobalSettings(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationEnrichmentSettings()', async () => {
+    const params = {
+      projectId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationEnrichmentSettings(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createSalIntegrationEnrichmentSettings()', async () => {
+    // Request models needed by this operation.
+
+    // SalIntegrationEnrichmentSettingsSemanticExpansionDescriptionGenerationConfiguration
+    const salIntegrationEnrichmentSettingsSemanticExpansionDescriptionGenerationConfigurationModel = {
+      assignment_threshold: 0.14,
+      suggestion_threshold: 0.9,
+    };
+
+    // SalIntegrationEnrichmentSettingsSemanticExpansionNameExpansionConfiguration
+    const salIntegrationEnrichmentSettingsSemanticExpansionNameExpansionConfigurationModel = {
+      assignment_threshold: 0.1,
+      suggestion_threshold: 0.1,
+    };
+
+    // SalIntegrationEnrichmentSettingsSemanticExpansion
+    const salIntegrationEnrichmentSettingsSemanticExpansionModel = {
+      description_generation: true,
+      description_generation_configuration: salIntegrationEnrichmentSettingsSemanticExpansionDescriptionGenerationConfigurationModel,
+      name_expansion: true,
+      name_expansion_configuration: salIntegrationEnrichmentSettingsSemanticExpansionNameExpansionConfigurationModel,
+    };
+
+    // SalIntegrationEnrichmentSettingsTermAssignment
+    const salIntegrationEnrichmentSettingsTermAssignmentModel = {
+      class_based_assignments: false,
+      evaluate_negative_assignments: false,
+      llm_based_assignments: false,
+      ml_based_assignments_custom: false,
+      ml_based_assignments_default: false,
+      name_matching: false,
+      term_assignment_threshold: 0.3,
+      term_suggestion_threshold: 0.4,
+    };
+
+    const params = {
+      semanticExpansion: salIntegrationEnrichmentSettingsSemanticExpansionModel,
+      termAssignment: salIntegrationEnrichmentSettingsTermAssignmentModel,
+      projectId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createSalIntegrationEnrichmentSettings(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(204);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createSalIntegrationUploadGlossary()', async () => {
+    const params = {
+      replaceOption: 'all',
+      glossaryCsv: Buffer.from('This is a mock file.'),
+      glossaryCsvContentType: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createSalIntegrationUploadGlossary(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('getSalIntegrationUploadGlossaryStatus()', async () => {
+    const params = {
+      processId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getSalIntegrationUploadGlossaryStatus(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
     expect(res.result).toBeDefined();
   });
 
@@ -1114,14 +1651,14 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
-  test('addSparkEngineCatalogs()', async () => {
+  test('createSparkEngineCatalogs()', async () => {
     const params = {
       engineId: 'testString',
-      catalogNames: 'testString',
+      catalogName: 'testString',
       authInstanceId: 'testString',
     };
 
-    const res = await watsonxDataService.addSparkEngineCatalogs(params);
+    const res = await watsonxDataService.createSparkEngineCatalogs(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(201);
     expect(res.result).toBeDefined();
@@ -1166,40 +1703,40 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
-  test('createSparkEnginePause()', async () => {
+  test('pauseSparkEngine()', async () => {
     const params = {
       engineId: 'testString',
       authInstanceId: 'testString',
     };
 
-    const res = await watsonxDataService.createSparkEnginePause(params);
+    const res = await watsonxDataService.pauseSparkEngine(params);
     expect(res).toBeDefined();
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(200);
     expect(res.result).toBeDefined();
   });
 
-  test('createSparkEngineResume()', async () => {
+  test('resumeSparkEngine()', async () => {
     const params = {
       engineId: 'testString',
       authInstanceId: 'testString',
     };
 
-    const res = await watsonxDataService.createSparkEngineResume(params);
+    const res = await watsonxDataService.resumeSparkEngine(params);
     expect(res).toBeDefined();
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(200);
     expect(res.result).toBeDefined();
   });
 
-  test('createSparkEngineScale()', async () => {
+  test('scaleSparkEngine()', async () => {
     const params = {
       engineId: 'testString',
       numberOfNodes: 2,
       authInstanceId: 'testString',
     };
 
-    const res = await watsonxDataService.createSparkEngineScale(params);
+    const res = await watsonxDataService.scaleSparkEngine(params);
     expect(res).toBeDefined();
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(202);
     expect(res.result).toBeDefined();
   });
 
@@ -1257,6 +1794,8 @@ describe('WatsonxDataV2_integration', () => {
       customPath: 'sample-path',
       schemaName: 'SampleSchema1',
       bucketName: 'sample-bucket',
+      hostname: 'db2@hostname.com',
+      port: 4553,
       authInstanceId: 'testString',
     };
 
@@ -1286,6 +1825,7 @@ describe('WatsonxDataV2_integration', () => {
       schemaId: 'testString',
       tableId: 'testString',
       engineId: 'testString',
+      type: 'testString',
       authInstanceId: 'testString',
     };
 
@@ -1295,17 +1835,18 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
-  test('renameTable()', async () => {
+  test('updateTable()', async () => {
     const params = {
       catalogId: 'testString',
       schemaId: 'testString',
       tableId: 'testString',
       engineId: 'testString',
       tableName: 'updated_table_name',
+      type: 'testString',
       authInstanceId: 'testString',
     };
 
-    const res = await watsonxDataService.renameTable(params);
+    const res = await watsonxDataService.updateTable(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(200);
     expect(res.result).toBeDefined();
@@ -1336,6 +1877,7 @@ describe('WatsonxDataV2_integration', () => {
       extra: 'varchar',
       length: '30',
       scale: '2',
+      precision: '10',
       type: 'varchar',
     };
 
@@ -1429,10 +1971,14 @@ describe('WatsonxDataV2_integration', () => {
 
   test('createMilvusService()', async () => {
     const params = {
+      bucketName: 'Sample bucket name',
       origin: 'native',
-      description: 'milvus service for running sql queries',
+      rootPath: 'Sample path',
       serviceDisplayName: 'sampleService',
+      bucketType: 'Sample bucket type',
+      description: 'milvus service for running sql queries',
       tags: ['tag1', 'tag2'],
+      tshirtSize: 'small',
       authInstanceId: 'testString',
     };
 
@@ -1469,10 +2015,72 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
+  test('listMilvusServiceDatabases()', async () => {
+    const params = {
+      serviceId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.listMilvusServiceDatabases(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('listMilvusDatabaseCollections()', async () => {
+    const params = {
+      serviceId: 'testString',
+      databaseId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.listMilvusDatabaseCollections(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createMilvusServicePause()', async () => {
+    const params = {
+      serviceId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createMilvusServicePause(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createMilvusServiceResume()', async () => {
+    const params = {
+      serviceId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createMilvusServiceResume(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
+  test('createMilvusServiceScale()', async () => {
+    const params = {
+      serviceId: 'testString',
+      tshirtSize: 'small',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.createMilvusServiceScale(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(201);
+    expect(res.result).toBeDefined();
+  });
+
   test('listIngestionJobs()', async () => {
     const params = {
       authInstanceId: 'testString',
-      page: 1,
+      start: '1',
       jobsPerPage: 1,
     };
 
@@ -1480,6 +2088,30 @@ describe('WatsonxDataV2_integration', () => {
     expect(res).toBeDefined();
     expect(res.status).toBe(200);
     expect(res.result).toBeDefined();
+  });
+
+  test('listIngestionJobs() via IngestionJobsPager', async () => {
+    const params = {
+      authInstanceId: 'testString',
+      jobsPerPage: 1,
+    };
+
+    const allResults = [];
+
+    // Test getNext().
+    let pager = new WatsonxDataV2.IngestionJobsPager(watsonxDataService, params);
+    while (pager.hasNext()) {
+      const nextPage = await pager.getNext();
+      expect(nextPage).not.toBeNull();
+      allResults.push(...nextPage);
+    }
+
+    // Test getAll().
+    pager = new WatsonxDataV2.IngestionJobsPager(watsonxDataService, params);
+    const allItems = await pager.getAll();
+    expect(allItems).not.toBeNull();
+    expect(allItems).toHaveLength(allResults.length);
+    console.log(`Retrieved a total of ${allResults.length} items(s) with pagination.`);
   });
 
   test('createIngestionJobs()', async () => {
@@ -1584,13 +2216,24 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
-  test('deregisterBucket()', async () => {
+  test('getEndpoints()', async () => {
+    const params = {
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.getEndpoints(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(200);
+    expect(res.result).toBeDefined();
+  });
+
+  test('deleteBucketRegistration()', async () => {
     const params = {
       bucketId: 'testString',
       authInstanceId: 'testString',
     };
 
-    const res = await watsonxDataService.deregisterBucket(params);
+    const res = await watsonxDataService.deleteBucketRegistration(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(204);
     expect(res.result).toBeDefined();
@@ -1620,6 +2263,31 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
+  test('deleteDriverRegistration()', async () => {
+    const params = {
+      driverId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.deleteDriverRegistration(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(204);
+    expect(res.result).toBeDefined();
+  });
+
+  test('deleteDriverEngines()', async () => {
+    const params = {
+      driverId: 'testString',
+      engineIds: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.deleteDriverEngines(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(204);
+    expect(res.result).toBeDefined();
+  });
+
   test('deleteOtherEngine()', async () => {
     const params = {
       engineId: 'testString',
@@ -1627,6 +2295,18 @@ describe('WatsonxDataV2_integration', () => {
     };
 
     const res = await watsonxDataService.deleteOtherEngine(params);
+    expect(res).toBeDefined();
+    expect(res.status).toBe(204);
+    expect(res.result).toBeDefined();
+  });
+
+  test('deleteIntegration()', async () => {
+    const params = {
+      integrationId: 'testString',
+      authInstanceId: 'testString',
+    };
+
+    const res = await watsonxDataService.deleteIntegration(params);
     expect(res).toBeDefined();
     expect(res.status).toBe(204);
     expect(res.result).toBeDefined();
@@ -1706,6 +2386,13 @@ describe('WatsonxDataV2_integration', () => {
     expect(res.result).toBeDefined();
   });
 
+  test('deleteSalIntegration()', async () => {
+    const res = await watsonxDataService.deleteSalIntegration();
+    expect(res).toBeDefined();
+    expect(res.status).toBe(204);
+    expect(res.result).toBeDefined();
+  });
+
   test('deleteSparkEngine()', async () => {
     const params = {
       engineId: 'testString',
@@ -1777,6 +2464,7 @@ describe('WatsonxDataV2_integration', () => {
       schemaId: 'testString',
       tableId: 'testString',
       engineId: 'testString',
+      type: 'testString',
       authInstanceId: 'testString',
     };
 

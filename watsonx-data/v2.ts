@@ -18,6 +18,9 @@
  * IBM OpenAPI SDK Code Generator Version: 3.93.0-c40121e6-20240729-182103
  */
 
+/* eslint-disable max-classes-per-file */
+/* eslint-disable no-await-in-loop */
+
 import * as extend from 'extend';
 import { IncomingHttpHeaders, OutgoingHttpHeaders } from 'http';
 import {
@@ -25,6 +28,7 @@ import {
   BaseService,
   UserOptions,
   getAuthenticatorFromEnvironment,
+  getQueryParam,
   validateParams,
 } from 'ibm-cloud-sdk-core';
 import { getSdkHeaders } from '../lib/common';
@@ -102,7 +106,7 @@ class WatsonxDataV2 extends BaseService {
    * Get list of registered buckets.
    *
    * @param {Object} [params] - The parameters to send to the service.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - Instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.BucketRegistrationCollection>>}
    */
@@ -146,15 +150,16 @@ class WatsonxDataV2 extends BaseService {
    * Register a new bucket.
    *
    * @param {Object} params - The parameters to send to the service.
-   * @param {BucketDetails} params.bucketDetails - bucket details.
    * @param {string} params.bucketType - bucket type.
    * @param {string} params.description - bucket description.
    * @param {string} params.managedBy - managed by.
    * @param {BucketCatalog} [params.associatedCatalog] - bucket catalog.
+   * @param {BucketDetails} [params.bucketDetails] - bucket details.
    * @param {string} [params.bucketDisplayName] - bucket display name.
    * @param {string} [params.region] - region where the bucket is located.
+   * @param {StorageDetails} [params.storageDetails] - storage details.
    * @param {string[]} [params.tags] - tags.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - Instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.BucketRegistration>>}
    */
@@ -162,21 +167,22 @@ class WatsonxDataV2 extends BaseService {
     params: WatsonxDataV2.CreateBucketRegistrationParams
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.BucketRegistration>> {
     const _params = { ...params };
-    const _requiredParams = ['bucketDetails', 'bucketType', 'description', 'managedBy'];
-    const _validParams = ['bucketDetails', 'bucketType', 'description', 'managedBy', 'associatedCatalog', 'bucketDisplayName', 'region', 'tags', 'authInstanceId', 'headers'];
+    const _requiredParams = ['bucketType', 'description', 'managedBy'];
+    const _validParams = ['bucketType', 'description', 'managedBy', 'associatedCatalog', 'bucketDetails', 'bucketDisplayName', 'region', 'storageDetails', 'tags', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
     }
 
     const body = {
-      'bucket_details': _params.bucketDetails,
       'bucket_type': _params.bucketType,
       'description': _params.description,
       'managed_by': _params.managedBy,
       'associated_catalog': _params.associatedCatalog,
+      'bucket_details': _params.bucketDetails,
       'bucket_display_name': _params.bucketDisplayName,
       'region': _params.region,
+      'storage_details': _params.storageDetails,
       'tags': _params.tags,
     };
 
@@ -266,8 +272,8 @@ class WatsonxDataV2 extends BaseService {
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
    */
-  public deregisterBucket(
-    params: WatsonxDataV2.DeregisterBucketParams
+  public deleteBucketRegistration(
+    params: WatsonxDataV2.DeleteBucketRegistrationParams
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
     const _params = { ...params };
     const _requiredParams = ['bucketId'];
@@ -281,7 +287,7 @@ class WatsonxDataV2 extends BaseService {
       'bucket_id': _params.bucketId,
     };
 
-    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'deregisterBucket');
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'deleteBucketRegistration');
 
     const parameters = {
       options: {
@@ -315,7 +321,7 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} [params.bucketDisplayName] - bucket display name.
    * @param {string} [params.description] - modified description.
    * @param {string[]} [params.tags] - Tags.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - Instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.BucketRegistration>>}
    */
@@ -473,7 +479,8 @@ class WatsonxDataV2 extends BaseService {
    *
    * @param {Object} params - The parameters to send to the service.
    * @param {string} params.bucketId - bucket id.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - Instance ID.
+   * @param {string} [params.path] - path.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.BucketRegistrationObjectCollection>>}
    */
@@ -482,11 +489,15 @@ class WatsonxDataV2 extends BaseService {
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.BucketRegistrationObjectCollection>> {
     const _params = { ...params };
     const _requiredParams = ['bucketId'];
-    const _validParams = ['bucketId', 'authInstanceId', 'headers'];
+    const _validParams = ['bucketId', 'authInstanceId', 'path', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
     }
+
+    const query = {
+      'path': _params.path,
+    };
 
     const path = {
       'bucket_id': _params.bucketId,
@@ -498,6 +509,7 @@ class WatsonxDataV2 extends BaseService {
       options: {
         url: '/bucket_registrations/{bucket_id}/objects',
         method: 'GET',
+        qs: query,
         path,
       },
       defaultOptions: extend(true, {}, this.baseOptions, {
@@ -506,6 +518,154 @@ class WatsonxDataV2 extends BaseService {
           sdkHeaders,
           {
             'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get bucket object properties.
+   *
+   * Get bucket object properties.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.bucketId - bucket id.
+   * @param {Path[]} [params.paths] - bucket object size.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.BucketObjectProperties>>}
+   */
+  public getBucketObjectProperties(
+    params: WatsonxDataV2.GetBucketObjectPropertiesParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.BucketObjectProperties>> {
+    const _params = { ...params };
+    const _requiredParams = ['bucketId'];
+    const _validParams = ['bucketId', 'paths', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'paths': _params.paths,
+    };
+
+    const path = {
+      'bucket_id': _params.bucketId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getBucketObjectProperties');
+
+    const parameters = {
+      options: {
+        url: '/bucket_registrations/{bucket_id}/object_properties',
+        method: 'POST',
+        body,
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Add/Create HDFS storage.
+   *
+   * Add or create a new HDFS database.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.bucketDisplayName - Bucket display name.
+   * @param {string} params.bucketType - Bucket type.
+   * @param {string} params.hmsThriftUri - HMS Thrift URI.
+   * @param {number} params.hmsThriftPort - HMS Thrift Port.
+   * @param {string} params.coreSite - contents of core-site.xml file.
+   * @param {string} params.hdfsSite - contents of hdfs-site.xml file.
+   * @param {string} params.kerberos - Kerberos Flag.
+   * @param {string} params.catalogName - Catalog name.
+   * @param {string} params.catalogType - Catalog type.
+   * @param {string} [params.krb5Config] - Kerberos config file.
+   * @param {NodeJS.ReadableStream | Buffer} [params.hiveKeytab] - Hive keytab file.
+   * @param {string} [params.hiveKeytabContentType] - The content type of hiveKeytab.
+   * @param {NodeJS.ReadableStream | Buffer} [params.hdfsKeytab] - HDFS keytab file.
+   * @param {string} [params.hdfsKeytabContentType] - The content type of hdfsKeytab.
+   * @param {string} [params.hiveServerPrincipal] - Hive server principal.
+   * @param {string} [params.hiveClientPrincipal] - Hive client principal.
+   * @param {string} [params.hdfsPrincipal] - HDFS principal.
+   * @param {string} [params.description] - Database description.
+   * @param {string} [params.createdOn] - Created on.
+   * @param {string} [params.authInstanceId] - Instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.HdfsStorageRegistration>>}
+   */
+  public createHdfsStorage(
+    params: WatsonxDataV2.CreateHdfsStorageParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.HdfsStorageRegistration>> {
+    const _params = { ...params };
+    const _requiredParams = ['bucketDisplayName', 'bucketType', 'hmsThriftUri', 'hmsThriftPort', 'coreSite', 'hdfsSite', 'kerberos', 'catalogName', 'catalogType'];
+    const _validParams = ['bucketDisplayName', 'bucketType', 'hmsThriftUri', 'hmsThriftPort', 'coreSite', 'hdfsSite', 'kerberos', 'catalogName', 'catalogType', 'krb5Config', 'hiveKeytab', 'hiveKeytabContentType', 'hdfsKeytab', 'hdfsKeytabContentType', 'hiveServerPrincipal', 'hiveClientPrincipal', 'hdfsPrincipal', 'description', 'createdOn', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const formData = {
+      'bucket_display_name': _params.bucketDisplayName,
+      'bucket_type': _params.bucketType,
+      'hms_thrift_uri': _params.hmsThriftUri,
+      'hms_thrift_port': _params.hmsThriftPort,
+      'core_site': _params.coreSite,
+      'hdfs_site': _params.hdfsSite,
+      'kerberos': _params.kerberos,
+      'catalog_name': _params.catalogName,
+      'catalog_type': _params.catalogType,
+      'krb5_config': _params.krb5Config,
+      'hive_keytab': {
+        data: _params.hiveKeytab,
+        contentType: _params.hiveKeytabContentType,
+      },
+      'hdfs_keytab': {
+        data: _params.hdfsKeytab,
+        contentType: _params.hdfsKeytabContentType,
+      },
+      'hive_server_principal': _params.hiveServerPrincipal,
+      'hive_client_principal': _params.hiveClientPrincipal,
+      'hdfs_principal': _params.hdfsPrincipal,
+      'description': _params.description,
+      'created_on': _params.createdOn,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createHdfsStorage');
+
+    const parameters = {
+      options: {
+        url: '/storage_hdfs_registrations',
+        method: 'POST',
+        formData
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
             'AuthInstanceId': _params.authInstanceId,
           },
           _params.headers
@@ -525,7 +685,7 @@ class WatsonxDataV2 extends BaseService {
    * Get list of databases.
    *
    * @param {Object} [params] - The parameters to send to the service.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.DatabaseRegistrationCollection>>}
    */
@@ -578,7 +738,7 @@ class WatsonxDataV2 extends BaseService {
    * the properties for a custom database.
    * @param {string} [params.description] - Database description.
    * @param {string[]} [params.tags] - tags.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.DatabaseRegistration>>}
    */
@@ -739,6 +899,7 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} [params.databaseDisplayName] - New database display name.
    * @param {string} [params.description] - New database description.
    * @param {string[]} [params.tags] - New tags.
+   * @param {DatabaseRegistrationPatchTopicsItems[]} [params.topics] - List of topics.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.DatabaseRegistration>>}
@@ -748,7 +909,7 @@ class WatsonxDataV2 extends BaseService {
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.DatabaseRegistration>> {
     const _params = { ...params };
     const _requiredParams = ['databaseId'];
-    const _validParams = ['databaseId', 'databaseDetails', 'databaseDisplayName', 'description', 'tags', 'authInstanceId', 'headers'];
+    const _validParams = ['databaseId', 'databaseDetails', 'databaseDisplayName', 'description', 'tags', 'topics', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
@@ -759,6 +920,7 @@ class WatsonxDataV2 extends BaseService {
       'database_display_name': _params.databaseDisplayName,
       'description': _params.description,
       'tags': _params.tags,
+      'topics': _params.topics,
     };
 
     const path = {
@@ -770,6 +932,275 @@ class WatsonxDataV2 extends BaseService {
     const parameters = {
       options: {
         url: '/database_registrations/{database_id}',
+        method: 'PATCH',
+        body,
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/merge-patch+json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+  /*************************
+   * drivers
+   ************************/
+
+  /**
+   * Get drivers.
+   *
+   * Get all driver details.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.DriverRegistrationCollection>>}
+   */
+  public listDriverRegistration(
+    params?: WatsonxDataV2.ListDriverRegistrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.DriverRegistrationCollection>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'listDriverRegistration');
+
+    const parameters = {
+      options: {
+        url: '/driver_registrations',
+        method: 'GET',
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Register driver.
+   *
+   * Register a new driver.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {NodeJS.ReadableStream | Buffer} params.driver - Driver file to upload.
+   * @param {string} params.driverName - Driver name.
+   * @param {string} params.connectionType - Driver connection type.
+   * @param {string} [params.driverContentType] - The content type of driver.
+   * @param {string} [params.version] - Driver status.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.DriverRegistration>>}
+   */
+  public createDriverRegistration(
+    params: WatsonxDataV2.CreateDriverRegistrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.DriverRegistration>> {
+    const _params = { ...params };
+    const _requiredParams = ['driver', 'driverName', 'connectionType'];
+    const _validParams = ['driver', 'driverName', 'connectionType', 'driverContentType', 'version', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const formData = {
+      'driver': {
+        data: _params.driver,
+        contentType: _params.driverContentType,
+      },
+      'driver_name': _params.driverName,
+      'connection_type': _params.connectionType,
+      'version': _params.version,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createDriverRegistration');
+
+    const parameters = {
+      options: {
+        url: '/driver_registrations',
+        method: 'POST',
+        formData
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Delete driver.
+   *
+   * Delete a driver.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.driverId - Driver ID.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
+   */
+  public deleteDriverRegistration(
+    params: WatsonxDataV2.DeleteDriverRegistrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
+    const _params = { ...params };
+    const _requiredParams = ['driverId'];
+    const _validParams = ['driverId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'driver_id': _params.driverId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'deleteDriverRegistration');
+
+    const parameters = {
+      options: {
+        url: '/driver_registrations/{driver_id}',
+        method: 'DELETE',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Disassociate engines from driver.
+   *
+   * Disassociate one or more engines from a driver.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.driverId - driver id.
+   * @param {string} params.engineIds - Engine id(s) to be disassociated from the driver, comma separated.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
+   */
+  public deleteDriverEngines(
+    params: WatsonxDataV2.DeleteDriverEnginesParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
+    const _params = { ...params };
+    const _requiredParams = ['driverId', 'engineIds'];
+    const _validParams = ['driverId', 'engineIds', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'engine_ids': _params.engineIds,
+    };
+
+    const path = {
+      'driver_id': _params.driverId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'deleteDriverEngines');
+
+    const parameters = {
+      options: {
+        url: '/driver_registrations/{driver_id}/engines',
+        method: 'DELETE',
+        qs: query,
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Associate engines to driver.
+   *
+   * Associate one or more engines to a driver.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.driverId - driver id.
+   * @param {string[]} [params.engines] - List of engine IDs.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.DriverRegistrationEngine>>}
+   */
+  public updateDriverEngines(
+    params: WatsonxDataV2.UpdateDriverEnginesParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.DriverRegistrationEngine>> {
+    const _params = { ...params };
+    const _requiredParams = ['driverId'];
+    const _validParams = ['driverId', 'engines', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'engines': _params.engines,
+    };
+
+    const path = {
+      'driver_id': _params.driverId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'updateDriverEngines');
+
+    const parameters = {
+      options: {
+        url: '/driver_registrations/{driver_id}/engines',
         method: 'PATCH',
         body,
         path,
@@ -849,7 +1280,6 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} [params.description] - engine description.
    * @param {string} [params.origin] - Origin - created or registered.
    * @param {string[]} [params.tags] - other engine tags.
-   * @param {string} [params.type] - Engine type.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.OtherEngine>>}
@@ -859,7 +1289,7 @@ class WatsonxDataV2 extends BaseService {
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.OtherEngine>> {
     const _params = { ...params };
     const _requiredParams = ['engineDetails', 'engineDisplayName'];
-    const _validParams = ['engineDetails', 'engineDisplayName', 'description', 'origin', 'tags', 'type', 'authInstanceId', 'headers'];
+    const _validParams = ['engineDetails', 'engineDisplayName', 'description', 'origin', 'tags', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
@@ -871,7 +1301,6 @@ class WatsonxDataV2 extends BaseService {
       'description': _params.description,
       'origin': _params.origin,
       'tags': _params.tags,
-      'type': _params.type,
     };
 
     const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createOtherEngine');
@@ -938,6 +1367,298 @@ class WatsonxDataV2 extends BaseService {
           true,
           sdkHeaders,
           {
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+  /*************************
+   * integrations
+   ************************/
+
+  /**
+   * Get all existing Integrations.
+   *
+   * Get all existing Integrations.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {string} [params.secret] - API Authentication service token.
+   * @param {string} [params.serviceType] - service_type.
+   * @param {string[]} [params.state] - state.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.IntegrationCollection>>}
+   */
+  public listAllIntegrations(
+    params?: WatsonxDataV2.ListAllIntegrationsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.IntegrationCollection>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['authInstanceId', 'secret', 'serviceType', 'state', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'service_type': _params.serviceType,
+      'state': _params.state,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'listAllIntegrations');
+
+    const parameters = {
+      options: {
+        url: '/integrations',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+            'Secret': _params.secret,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * To register an integration.
+   *
+   * To register an integration.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.apikey] - Integration APIKEY.
+   * @param {boolean} [params.enableDataPolicyWithinWxd] - data policy enabler with wxd for ranger.
+   * @param {string} [params.password] - Integration password.
+   * @param {string} [params.resource] - resouce for ranger.
+   * @param {string} [params.serviceType] - Integration type.
+   * @param {string[]} [params.storageCatalogs] - Comma separated list of bucket catalogs which have ikc enabled.
+   * @param {string} [params.url] - Integration Connection URL.
+   * @param {string} [params.username] - Integration username.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.Integration>>}
+   */
+  public createIntegration(
+    params?: WatsonxDataV2.CreateIntegrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.Integration>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['apikey', 'enableDataPolicyWithinWxd', 'password', 'resource', 'serviceType', 'storageCatalogs', 'url', 'username', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'apikey': _params.apikey,
+      'enable_data_policy_within_wxd': _params.enableDataPolicyWithinWxd,
+      'password': _params.password,
+      'resource': _params.resource,
+      'service_type': _params.serviceType,
+      'storage_catalogs': _params.storageCatalogs,
+      'url': _params.url,
+      'username': _params.username,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createIntegration');
+
+    const parameters = {
+      options: {
+        url: '/integrations',
+        method: 'POST',
+        body,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get an Integration.
+   *
+   * Get an Integration.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.integrationId - integration_id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {string} [params.secret] - API Authentication service token.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.Integration>>}
+   */
+  public getIntegrations(
+    params: WatsonxDataV2.GetIntegrationsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.Integration>> {
+    const _params = { ...params };
+    const _requiredParams = ['integrationId'];
+    const _validParams = ['integrationId', 'authInstanceId', 'secret', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'integration_id': _params.integrationId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getIntegrations');
+
+    const parameters = {
+      options: {
+        url: '/integrations/{integration_id}',
+        method: 'GET',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+            'Secret': _params.secret,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Remove an Integration.
+   *
+   * Remove an Integration.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.integrationId - integration_id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
+   */
+  public deleteIntegration(
+    params: WatsonxDataV2.DeleteIntegrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
+    const _params = { ...params };
+    const _requiredParams = ['integrationId'];
+    const _validParams = ['integrationId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'integration_id': _params.integrationId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'deleteIntegration');
+
+    const parameters = {
+      options: {
+        url: '/integrations/{integration_id}',
+        method: 'DELETE',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Update an existing Integration.
+   *
+   * Update an existing Integration.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.integrationId - integration_id.
+   * @param {string} [params.apikey] - Integration APIKEY.
+   * @param {boolean} [params.enableDataPolicyWithinWxd] - data policy enabler with wxd for ranger.
+   * @param {string} [params.password] - Integration password.
+   * @param {string} [params.resource] - resouce for ranger.
+   * @param {string[]} [params.storageCatalogs] - Comma separated list of bucket catalogs which have ikc enabled.
+   * @param {string} [params.url] - Integration Connection URL.
+   * @param {string} [params.username] - Integration username.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.Integration>>}
+   */
+  public updateIntegration(
+    params: WatsonxDataV2.UpdateIntegrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.Integration>> {
+    const _params = { ...params };
+    const _requiredParams = ['integrationId'];
+    const _validParams = ['integrationId', 'apikey', 'enableDataPolicyWithinWxd', 'password', 'resource', 'storageCatalogs', 'url', 'username', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'apikey': _params.apikey,
+      'enable_data_policy_within_wxd': _params.enableDataPolicyWithinWxd,
+      'password': _params.password,
+      'resource': _params.resource,
+      'storage_catalogs': _params.storageCatalogs,
+      'url': _params.url,
+      'username': _params.username,
+    };
+
+    const path = {
+      'integration_id': _params.integrationId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'updateIntegration');
+
+    const parameters = {
+      options: {
+        url: '/integrations/{integration_id}',
+        method: 'PATCH',
+        body,
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/merge-patch+json',
             'AuthInstanceId': _params.authInstanceId,
           },
           _params.headers
@@ -1380,6 +2101,70 @@ class WatsonxDataV2 extends BaseService {
     return this.createRequest(parameters);
   }
   /*************************
+   * queries
+   ************************/
+
+  /**
+   * Execute a query.
+   *
+   * Execute a query.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.engineId - Engine name.
+   * @param {string} params.sqlString - query to be executed.
+   * @param {string} [params.catalogName] - Name of the catalog.
+   * @param {string} [params.schemaName] - Schema name.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.ExecuteQueryCreatedBody>>}
+   */
+  public createExecuteQuery(
+    params: WatsonxDataV2.CreateExecuteQueryParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.ExecuteQueryCreatedBody>> {
+    const _params = { ...params };
+    const _requiredParams = ['engineId', 'sqlString'];
+    const _validParams = ['engineId', 'sqlString', 'catalogName', 'schemaName', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'sql_string': _params.sqlString,
+      'catalog_name': _params.catalogName,
+      'schema_name': _params.schemaName,
+    };
+
+    const path = {
+      'engine_id': _params.engineId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createExecuteQuery');
+
+    const parameters = {
+      options: {
+        url: '/queries/execute/{engine_id}',
+        method: 'POST',
+        body,
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+  /*************************
    * prestissimoEngines
    ************************/
 
@@ -1715,31 +2500,31 @@ class WatsonxDataV2 extends BaseService {
    *
    * @param {Object} params - The parameters to send to the service.
    * @param {string} params.engineId - engine id.
-   * @param {string} [params.catalogNames] - catalog names.
+   * @param {string} [params.catalogName] - catalog names.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
-   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.CatalogCollection>>}
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.Catalog>>}
    */
-  public addPrestissimoEngineCatalogs(
-    params: WatsonxDataV2.AddPrestissimoEngineCatalogsParams
-  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.CatalogCollection>> {
+  public createPrestissimoEngineCatalogs(
+    params: WatsonxDataV2.CreatePrestissimoEngineCatalogsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.Catalog>> {
     const _params = { ...params };
     const _requiredParams = ['engineId'];
-    const _validParams = ['engineId', 'catalogNames', 'authInstanceId', 'headers'];
+    const _validParams = ['engineId', 'catalogName', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
     }
 
     const body = {
-      'catalog_names': _params.catalogNames,
+      'catalog_name': _params.catalogName,
     };
 
     const path = {
       'engine_id': _params.engineId,
     };
 
-    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'addPrestissimoEngineCatalogs');
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createPrestissimoEngineCatalogs');
 
     const parameters = {
       options: {
@@ -2149,8 +2934,8 @@ class WatsonxDataV2 extends BaseService {
    *
    * @param {Object} params - The parameters to send to the service.
    * @param {string} params.engineId - engine id.
-   * @param {PrestissimoNodeDescriptionBody} [params.coordinator] - Node details.
-   * @param {PrestissimoNodeDescriptionBody} [params.worker] - Node details.
+   * @param {PrestissimoNodeDescriptionBody} [params.coordinator] - coordinator/worker property settings.
+   * @param {PrestissimoNodeDescriptionBody} [params.worker] - coordinator/worker property settings.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>>}
@@ -2536,31 +3321,31 @@ class WatsonxDataV2 extends BaseService {
    *
    * @param {Object} params - The parameters to send to the service.
    * @param {string} params.engineId - engine id.
-   * @param {string} [params.catalogNames] - catalog names.
+   * @param {string} [params.catalogName] - catalog names.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
-   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.CatalogCollection>>}
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.Catalog>>}
    */
-  public addPrestoEngineCatalogs(
-    params: WatsonxDataV2.AddPrestoEngineCatalogsParams
-  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.CatalogCollection>> {
+  public createPrestoEngineCatalogs(
+    params: WatsonxDataV2.CreatePrestoEngineCatalogsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.Catalog>> {
     const _params = { ...params };
     const _requiredParams = ['engineId'];
-    const _validParams = ['engineId', 'catalogNames', 'authInstanceId', 'headers'];
+    const _validParams = ['engineId', 'catalogName', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
     }
 
     const body = {
-      'catalog_names': _params.catalogNames,
+      'catalog_name': _params.catalogName,
     };
 
     const path = {
       'engine_id': _params.engineId,
     };
 
-    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'addPrestoEngineCatalogs');
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createPrestoEngineCatalogs');
 
     const parameters = {
       options: {
@@ -3012,6 +3797,924 @@ class WatsonxDataV2 extends BaseService {
           {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+  /*************************
+   * semanticAutomationLayer
+   ************************/
+
+  /**
+   * Get SAL Integrations.
+   *
+   * Get SAL Integration.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegration>>}
+   */
+  public getSalIntegration(
+    params?: WatsonxDataV2.GetSalIntegrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegration>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegration');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations',
+        method: 'GET',
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Create sal integration with wxd.
+   *
+   * Add or create a new sal integration.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.apikey - IAM apikey.
+   * @param {string} params.engineId - engine ID.
+   * @param {string} [params.storageResourceCrn] - COS storage resource crn.
+   * @param {string} [params.storageType] - COS storage type.
+   * @param {boolean} [params.trialPlan] - COS storage type.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegration>>}
+   */
+  public createSalIntegration(
+    params: WatsonxDataV2.CreateSalIntegrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegration>> {
+    const _params = { ...params };
+    const _requiredParams = ['apikey', 'engineId'];
+    const _validParams = ['apikey', 'engineId', 'storageResourceCrn', 'storageType', 'trialPlan', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'apikey': _params.apikey,
+      'engine_id': _params.engineId,
+      'storage_resource_crn': _params.storageResourceCrn,
+      'storage_type': _params.storageType,
+      'trial_plan': _params.trialPlan,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSalIntegration');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations',
+        method: 'POST',
+        body,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Delete sal-wxd integration.
+   *
+   * Delete a sal-wxd integration.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
+   */
+  public deleteSalIntegration(
+    params?: WatsonxDataV2.DeleteSalIntegrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'deleteSalIntegration');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations',
+        method: 'DELETE',
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Update sal-wxd integration.
+   *
+   * Update sal-wxd integration details.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.op] - op.
+   * @param {string} [params.path] - path.
+   * @param {string} [params.value] - path.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegration>>}
+   */
+  public updateSalIntegration(
+    params?: WatsonxDataV2.UpdateSalIntegrationParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegration>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['op', 'path', 'value', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'op': _params.op,
+      'path': _params.path,
+      'value': _params.value,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'updateSalIntegration');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations',
+        method: 'PATCH',
+        body,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/merge-patch+json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Trigger enrichment jobs on schemas and tables.
+   *
+   * Trigger enrichment jobs on schemas and tables.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {EnrichmentObj} [params.enrichmentPrototype] - Encrichment api object.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
+   */
+  public createSalIntegrationEnrichment(
+    params?: WatsonxDataV2.CreateSalIntegrationEnrichmentParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['enrichmentPrototype', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'enrichment_prototype': _params.enrichmentPrototype,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSalIntegrationEnrichment');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/enrichment',
+        method: 'POST',
+        body,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get semantic enrichment assets associated with the schema.
+   *
+   * Get semantic enrichment job runs associated with the schema.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.projectId] - enrichment project id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentAssets>>}
+   */
+  public getSalIntegrationEnrichmentAssets(
+    params?: WatsonxDataV2.GetSalIntegrationEnrichmentAssetsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentAssets>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['projectId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'project_id': _params.projectId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationEnrichmentAssets');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/enrichment_assets',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get semantic enrichment data asset associated with the table.
+   *
+   * Get semantic enrichment data asset associated with the table.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.projectId] - enrichment project id.
+   * @param {string} [params.assetId] - enrichment data asset id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentDataAsset>>}
+   */
+  public getSalIntegrationEnrichmentDataAsset(
+    params?: WatsonxDataV2.GetSalIntegrationEnrichmentDataAssetParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentDataAsset>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['projectId', 'assetId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'project_id': _params.projectId,
+      'asset_id': _params.assetId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationEnrichmentDataAsset');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/enrichment_data_asset',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get semantic enrichment job run logs associated with the job run.
+   *
+   * Get semantic enrichment job run logs associated with the job run.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.jobId] - enrichment job id.
+   * @param {string} [params.jobRunId] - enrichment job run id.
+   * @param {string} [params.projectId] - enrichment project id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentJobRunLogs>>}
+   */
+  public getSalIntegrationEnrichmentJobRunLogs(
+    params?: WatsonxDataV2.GetSalIntegrationEnrichmentJobRunLogsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentJobRunLogs>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['jobId', 'jobRunId', 'projectId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'job_id': _params.jobId,
+      'job_run_id': _params.jobRunId,
+      'project_id': _params.projectId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationEnrichmentJobRunLogs');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/enrichment_job_run_logs',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get semantic enrichment job runs associated with the schema.
+   *
+   * Get semantic enrichment job runs associated with the schema.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.jobId] - enrichment job id.
+   * @param {string} [params.projectId] - enrichment project id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentJobRun>>}
+   */
+  public getSalIntegrationEnrichmentJobRuns(
+    params?: WatsonxDataV2.GetSalIntegrationEnrichmentJobRunsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentJobRun>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['jobId', 'projectId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'job_id': _params.jobId,
+      'project_id': _params.projectId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationEnrichmentJobRuns');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/enrichment_job_runs',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get semantic enrichment jobs associated with the schema.
+   *
+   * Get semantic enrichment jobs associated with the schema.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.wkcProjectId] - ikc project id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentJobs>>}
+   */
+  public getSalIntegrationEnrichmentJobs(
+    params?: WatsonxDataV2.GetSalIntegrationEnrichmentJobsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentJobs>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['wkcProjectId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'wkc_project_id': _params.wkcProjectId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationEnrichmentJobs');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/enrichment_jobs',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get list of uploaded glossary terms.
+   *
+   * Get list of uploaded glossary terms.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationGlossaryTerms>>}
+   */
+  public getSalIntegrationGlossaryTerms(
+    params?: WatsonxDataV2.GetSalIntegrationGlossaryTermsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationGlossaryTerms>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationGlossaryTerms');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/glossary_terms',
+        method: 'GET',
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get wkc catalog and project mapped to the schema.
+   *
+   * Get wkc catalog and project mapped to the schema.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.catalogName - catalog name.
+   * @param {string} params.schemaName - schema name.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationMappings>>}
+   */
+  public getSalIntegrationMappings(
+    params: WatsonxDataV2.GetSalIntegrationMappingsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationMappings>> {
+    const _params = { ...params };
+    const _requiredParams = ['catalogName', 'schemaName'];
+    const _validParams = ['catalogName', 'schemaName', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'catalog_name': _params.catalogName,
+      'schema_name': _params.schemaName,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationMappings');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/mappings',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get metadata enrichment global settings.
+   *
+   * Get metadata enrichment global settings.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentSettings>>}
+   */
+  public getSalIntegrationEnrichmentGlobalSettings(
+    params?: WatsonxDataV2.GetSalIntegrationEnrichmentGlobalSettingsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentSettings>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationEnrichmentGlobalSettings');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/metadata_enrichment_global_settings',
+        method: 'GET',
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Add metadata enrichment global settings.
+   *
+   * Add metadata enrichment global settings.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {SalIntegrationEnrichmentSettingsSemanticExpansion} [params.semanticExpansion] - semantic expansion.
+   * @param {SalIntegrationEnrichmentSettingsTermAssignment} [params.termAssignment] - semantic expansion.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentSettings>>}
+   */
+  public createSalIntegrationEnrichmentGlobalSettings(
+    params?: WatsonxDataV2.CreateSalIntegrationEnrichmentGlobalSettingsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentSettings>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['semanticExpansion', 'termAssignment', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'semantic_expansion': _params.semanticExpansion,
+      'term_assignment': _params.termAssignment,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSalIntegrationEnrichmentGlobalSettings');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/metadata_enrichment_global_settings',
+        method: 'POST',
+        body,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * get metadata enrichment settings for a project.
+   *
+   * get metadata enrichment settings for a project.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.projectId] - wkc project id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentSettings>>}
+   */
+  public getSalIntegrationEnrichmentSettings(
+    params?: WatsonxDataV2.GetSalIntegrationEnrichmentSettingsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationEnrichmentSettings>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['projectId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'project_id': _params.projectId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationEnrichmentSettings');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/metadata_enrichment_settings',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Add metadata enrichment settings for a project.
+   *
+   * Add metadata enrichment settings for a project.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {SalIntegrationEnrichmentSettingsSemanticExpansion} [params.semanticExpansion] - semantic expansion.
+   * @param {SalIntegrationEnrichmentSettingsTermAssignment} [params.termAssignment] - semantic expansion.
+   * @param {string} [params.projectId] - wkc project id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
+   */
+  public createSalIntegrationEnrichmentSettings(
+    params?: WatsonxDataV2.CreateSalIntegrationEnrichmentSettingsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['semanticExpansion', 'termAssignment', 'projectId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'semantic_expansion': _params.semanticExpansion,
+      'term_assignment': _params.termAssignment,
+    };
+
+    const query = {
+      'project_id': _params.projectId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSalIntegrationEnrichmentSettings');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/metadata_enrichment_settings',
+        method: 'POST',
+        body,
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Upload semantic enrichment business terms glossary.
+   *
+   * Upload semantic enrichment business terms glossary.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.replaceOption - glossary upload replace option.
+   * @param {NodeJS.ReadableStream | Buffer} [params.glossaryCsv] - Glossary CSV file.
+   * @param {string} [params.glossaryCsvContentType] - The content type of glossaryCsv.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationUploadGlossary>>}
+   */
+  public createSalIntegrationUploadGlossary(
+    params: WatsonxDataV2.CreateSalIntegrationUploadGlossaryParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationUploadGlossary>> {
+    const _params = { ...params };
+    const _requiredParams = ['replaceOption'];
+    const _validParams = ['replaceOption', 'glossaryCsv', 'glossaryCsvContentType', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const formData = {
+      'replace_option': _params.replaceOption,
+      'glossary_csv': {
+        data: _params.glossaryCsv,
+        contentType: _params.glossaryCsvContentType,
+      },
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSalIntegrationUploadGlossary');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/upload_glossary',
+        method: 'POST',
+        formData
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get status of upload glossary job.
+   *
+   * Get status of upload glossary job.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.processId] - upload process id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationUploadGlossaryStatus>>}
+   */
+  public getSalIntegrationUploadGlossaryStatus(
+    params?: WatsonxDataV2.GetSalIntegrationUploadGlossaryStatusParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SalIntegrationUploadGlossaryStatus>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['processId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const query = {
+      'process_id': _params.processId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getSalIntegrationUploadGlossaryStatus');
+
+    const parameters = {
+      options: {
+        url: '/sal_integrations/upload_glossary_status',
+        method: 'GET',
+        qs: query,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
             'AuthInstanceId': _params.authInstanceId,
           },
           _params.headers
@@ -3587,31 +5290,31 @@ class WatsonxDataV2 extends BaseService {
    *
    * @param {Object} params - The parameters to send to the service.
    * @param {string} params.engineId - engine id.
-   * @param {string} [params.catalogNames] - catalog names.
+   * @param {string} [params.catalogName] - catalog names.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
-   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.CatalogCollection>>}
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.Catalog>>}
    */
-  public addSparkEngineCatalogs(
-    params: WatsonxDataV2.AddSparkEngineCatalogsParams
-  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.CatalogCollection>> {
+  public createSparkEngineCatalogs(
+    params: WatsonxDataV2.CreateSparkEngineCatalogsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.Catalog>> {
     const _params = { ...params };
     const _requiredParams = ['engineId'];
-    const _validParams = ['engineId', 'catalogNames', 'authInstanceId', 'headers'];
+    const _validParams = ['engineId', 'catalogName', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
     }
 
     const body = {
-      'catalog_names': _params.catalogNames,
+      'catalog_name': _params.catalogName,
     };
 
     const path = {
       'engine_id': _params.engineId,
     };
 
-    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'addSparkEngineCatalogs');
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSparkEngineCatalogs');
 
     const parameters = {
       options: {
@@ -3913,8 +5616,8 @@ class WatsonxDataV2 extends BaseService {
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>>}
    */
-  public createSparkEnginePause(
-    params: WatsonxDataV2.CreateSparkEnginePauseParams
+  public pauseSparkEngine(
+    params: WatsonxDataV2.PauseSparkEngineParams
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>> {
     const _params = { ...params };
     const _requiredParams = ['engineId'];
@@ -3928,7 +5631,7 @@ class WatsonxDataV2 extends BaseService {
       'engine_id': _params.engineId,
     };
 
-    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSparkEnginePause');
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'pauseSparkEngine');
 
     const parameters = {
       options: {
@@ -3963,8 +5666,8 @@ class WatsonxDataV2 extends BaseService {
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>>}
    */
-  public createSparkEngineResume(
-    params: WatsonxDataV2.CreateSparkEngineResumeParams
+  public resumeSparkEngine(
+    params: WatsonxDataV2.ResumeSparkEngineParams
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>> {
     const _params = { ...params };
     const _requiredParams = ['engineId'];
@@ -3978,7 +5681,7 @@ class WatsonxDataV2 extends BaseService {
       'engine_id': _params.engineId,
     };
 
-    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSparkEngineResume');
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'resumeSparkEngine');
 
     const parameters = {
       options: {
@@ -4014,8 +5717,8 @@ class WatsonxDataV2 extends BaseService {
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>>}
    */
-  public createSparkEngineScale(
-    params: WatsonxDataV2.CreateSparkEngineScaleParams
+  public scaleSparkEngine(
+    params: WatsonxDataV2.ScaleSparkEngineParams
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>> {
     const _params = { ...params };
     const _requiredParams = ['engineId'];
@@ -4033,7 +5736,7 @@ class WatsonxDataV2 extends BaseService {
       'engine_id': _params.engineId,
     };
 
-    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createSparkEngineScale');
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'scaleSparkEngine');
 
     const parameters = {
       options: {
@@ -4267,7 +5970,9 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} params.customPath - Path associated with bucket.
    * @param {string} params.schemaName - Schema name.
    * @param {string} [params.bucketName] - Bucket associated to metastore where schema will be added.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.hostname] - Host name.
+   * @param {number} [params.port] - Port.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.CreateSchemaCreatedBody>>}
    */
@@ -4276,7 +5981,7 @@ class WatsonxDataV2 extends BaseService {
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.CreateSchemaCreatedBody>> {
     const _params = { ...params };
     const _requiredParams = ['engineId', 'catalogId', 'customPath', 'schemaName'];
-    const _validParams = ['engineId', 'catalogId', 'customPath', 'schemaName', 'bucketName', 'authInstanceId', 'headers'];
+    const _validParams = ['engineId', 'catalogId', 'customPath', 'schemaName', 'bucketName', 'hostname', 'port', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
@@ -4286,6 +5991,8 @@ class WatsonxDataV2 extends BaseService {
       'custom_path': _params.customPath,
       'schema_name': _params.schemaName,
       'bucket_name': _params.bucketName,
+      'hostname': _params.hostname,
+      'port': _params.port,
     };
 
     const query = {
@@ -4448,6 +6155,7 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} params.schemaId - URL encoded schema name.
    * @param {string} params.tableId - URL encoded table name.
    * @param {string} params.engineId - engine id.
+   * @param {string} [params.type] - URL encoded table type.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.Table>>}
@@ -4457,7 +6165,7 @@ class WatsonxDataV2 extends BaseService {
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.Table>> {
     const _params = { ...params };
     const _requiredParams = ['catalogId', 'schemaId', 'tableId', 'engineId'];
-    const _validParams = ['catalogId', 'schemaId', 'tableId', 'engineId', 'authInstanceId', 'headers'];
+    const _validParams = ['catalogId', 'schemaId', 'tableId', 'engineId', 'type', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
@@ -4465,6 +6173,7 @@ class WatsonxDataV2 extends BaseService {
 
     const query = {
       'engine_id': _params.engineId,
+      'type': _params.type,
     };
 
     const path = {
@@ -4508,6 +6217,7 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} params.schemaId - URL encoded schema name.
    * @param {string} params.tableId - URL encoded table name.
    * @param {string} params.engineId - engine id.
+   * @param {string} [params.type] - URL encoded table type.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>>}
@@ -4517,7 +6227,7 @@ class WatsonxDataV2 extends BaseService {
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EmptyObject>> {
     const _params = { ...params };
     const _requiredParams = ['catalogId', 'schemaId', 'tableId', 'engineId'];
-    const _validParams = ['catalogId', 'schemaId', 'tableId', 'engineId', 'authInstanceId', 'headers'];
+    const _validParams = ['catalogId', 'schemaId', 'tableId', 'engineId', 'type', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
@@ -4525,6 +6235,7 @@ class WatsonxDataV2 extends BaseService {
 
     const query = {
       'engine_id': _params.engineId,
+      'type': _params.type,
     };
 
     const path = {
@@ -4568,16 +6279,17 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} params.tableId - URL encoded table name.
    * @param {string} params.engineId - engine id.
    * @param {string} [params.tableName] - New table name.
+   * @param {string} [params.type] - URL encoded table type.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.Table>>}
    */
-  public renameTable(
-    params: WatsonxDataV2.RenameTableParams
+  public updateTable(
+    params: WatsonxDataV2.UpdateTableParams
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.Table>> {
     const _params = { ...params };
     const _requiredParams = ['catalogId', 'schemaId', 'tableId', 'engineId'];
-    const _validParams = ['catalogId', 'schemaId', 'tableId', 'engineId', 'tableName', 'authInstanceId', 'headers'];
+    const _validParams = ['catalogId', 'schemaId', 'tableId', 'engineId', 'tableName', 'type', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
@@ -4589,6 +6301,7 @@ class WatsonxDataV2 extends BaseService {
 
     const query = {
       'engine_id': _params.engineId,
+      'type': _params.type,
     };
 
     const path = {
@@ -4597,7 +6310,7 @@ class WatsonxDataV2 extends BaseService {
       'table_id': _params.tableId,
     };
 
-    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'renameTable');
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'updateTable');
 
     const parameters = {
       options: {
@@ -4634,7 +6347,7 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} params.catalogId - catalog id.
    * @param {string} params.schemaId - URL encoded schema name.
    * @param {string} params.tableId - URL encoded schema name.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.ColumnCollection>>}
    */
@@ -4695,7 +6408,7 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} params.schemaId - URL encoded schema name.
    * @param {string} params.tableId - URL encoded schema name.
    * @param {Column[]} [params.columns] - List of the tables present in the schema.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.ColumnCollection>>}
    */
@@ -4891,7 +6604,7 @@ class WatsonxDataV2 extends BaseService {
    * @param {string} params.catalogId - Catalog ID.
    * @param {string} params.schemaId - Schema ID.
    * @param {string} params.tableId - Table ID.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.TableSnapshotCollection>>}
    */
@@ -5015,8 +6728,8 @@ class WatsonxDataV2 extends BaseService {
    *
    * @param {Object} params - The parameters to send to the service.
    * @param {string} params.catalogId - catalog ID.
-   * @param {boolean} params.autoAddNewTables - Auto add new table.
-   * @param {boolean} params.syncIcebergMd - Sync iceberg metadata.
+   * @param {boolean} [params.autoAddNewTables] - Auto add new table.
+   * @param {boolean} [params.syncIcebergMd] - Sync iceberg metadata.
    * @param {string} [params.authInstanceId] - CRN.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.UpdateSyncCatalogOKBody>>}
@@ -5025,7 +6738,7 @@ class WatsonxDataV2 extends BaseService {
     params: WatsonxDataV2.UpdateSyncCatalogParams
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.UpdateSyncCatalogOKBody>> {
     const _params = { ...params };
-    const _requiredParams = ['catalogId', 'autoAddNewTables', 'syncIcebergMd'];
+    const _requiredParams = ['catalogId'];
     const _validParams = ['catalogId', 'autoAddNewTables', 'syncIcebergMd', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
@@ -5076,7 +6789,7 @@ class WatsonxDataV2 extends BaseService {
    * Get list milvus services.
    *
    * @param {Object} [params] - The parameters to send to the service.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.MilvusServiceCollection>>}
    */
@@ -5120,11 +6833,15 @@ class WatsonxDataV2 extends BaseService {
    * Create milvus service.
    *
    * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.bucketName - bucket name.
    * @param {string} params.origin - Origin - place holder.
+   * @param {string} params.rootPath - root path.
+   * @param {string} params.serviceDisplayName - Service display name.
+   * @param {string} [params.bucketType] - bucket type.
    * @param {string} [params.description] - Service description.
-   * @param {string} [params.serviceDisplayName] - Service display name.
    * @param {string[]} [params.tags] - Tags.
-   * @param {string} [params.authInstanceId] - CRN.
+   * @param {string} [params.tshirtSize] - tshirt size.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.MilvusService>>}
    */
@@ -5132,18 +6849,22 @@ class WatsonxDataV2 extends BaseService {
     params: WatsonxDataV2.CreateMilvusServiceParams
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.MilvusService>> {
     const _params = { ...params };
-    const _requiredParams = ['origin'];
-    const _validParams = ['origin', 'description', 'serviceDisplayName', 'tags', 'authInstanceId', 'headers'];
+    const _requiredParams = ['bucketName', 'origin', 'rootPath', 'serviceDisplayName'];
+    const _validParams = ['bucketName', 'origin', 'rootPath', 'serviceDisplayName', 'bucketType', 'description', 'tags', 'tshirtSize', 'authInstanceId', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
     }
 
     const body = {
+      'bucket_name': _params.bucketName,
       'origin': _params.origin,
-      'description': _params.description,
+      'root_path': _params.rootPath,
       'service_display_name': _params.serviceDisplayName,
+      'bucket_type': _params.bucketType,
+      'description': _params.description,
       'tags': _params.tags,
+      'tshirt_size': _params.tshirtSize,
     };
 
     const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createMilvusService');
@@ -5330,6 +7051,265 @@ class WatsonxDataV2 extends BaseService {
 
     return this.createRequest(parameters);
   }
+
+  /**
+   * Get milvus service databases.
+   *
+   * Get milvus service databases.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.serviceId - service id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.MilvusServiceDatabases>>}
+   */
+  public listMilvusServiceDatabases(
+    params: WatsonxDataV2.ListMilvusServiceDatabasesParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.MilvusServiceDatabases>> {
+    const _params = { ...params };
+    const _requiredParams = ['serviceId'];
+    const _validParams = ['serviceId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'service_id': _params.serviceId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'listMilvusServiceDatabases');
+
+    const parameters = {
+      options: {
+        url: '/milvus_services/{service_id}/databases',
+        method: 'GET',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Get milvus database collections.
+   *
+   * Get milvus database collections.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.serviceId - service id.
+   * @param {string} params.databaseId - database id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.MilvusDatabaseCollections>>}
+   */
+  public listMilvusDatabaseCollections(
+    params: WatsonxDataV2.ListMilvusDatabaseCollectionsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.MilvusDatabaseCollections>> {
+    const _params = { ...params };
+    const _requiredParams = ['serviceId', 'databaseId'];
+    const _validParams = ['serviceId', 'databaseId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'service_id': _params.serviceId,
+      'database_id': _params.databaseId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'listMilvusDatabaseCollections');
+
+    const parameters = {
+      options: {
+        url: '/milvus_services/{service_id}/databases/{database_id}/collections',
+        method: 'GET',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Pause milvus service.
+   *
+   * Pause a running milvus service.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.serviceId - service id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>>}
+   */
+  public createMilvusServicePause(
+    params: WatsonxDataV2.CreateMilvusServicePauseParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>> {
+    const _params = { ...params };
+    const _requiredParams = ['serviceId'];
+    const _validParams = ['serviceId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'service_id': _params.serviceId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createMilvusServicePause');
+
+    const parameters = {
+      options: {
+        url: '/milvus_services/{service_id}/pause',
+        method: 'POST',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Resume milvus service.
+   *
+   * Resume a paused milvus service.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.serviceId - service id.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>>}
+   */
+  public createMilvusServiceResume(
+    params: WatsonxDataV2.CreateMilvusServiceResumeParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>> {
+    const _params = { ...params };
+    const _requiredParams = ['serviceId'];
+    const _validParams = ['serviceId', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const path = {
+      'service_id': _params.serviceId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createMilvusServiceResume');
+
+    const parameters = {
+      options: {
+        url: '/milvus_services/{service_id}/resume',
+        method: 'POST',
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
+
+  /**
+   * Scale a milvus service.
+   *
+   * Scale an existing milvus service.
+   *
+   * @param {Object} params - The parameters to send to the service.
+   * @param {string} params.serviceId - service id.
+   * @param {string} [params.tshirtSize] - tshirt size.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>>}
+   */
+  public createMilvusServiceScale(
+    params: WatsonxDataV2.CreateMilvusServiceScaleParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.SuccessResponse>> {
+    const _params = { ...params };
+    const _requiredParams = ['serviceId'];
+    const _validParams = ['serviceId', 'tshirtSize', 'authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const body = {
+      'tshirt_size': _params.tshirtSize,
+    };
+
+    const path = {
+      'service_id': _params.serviceId,
+    };
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'createMilvusServiceScale');
+
+    const parameters = {
+      options: {
+        url: '/milvus_services/{service_id}/scale',
+        method: 'POST',
+        body,
+        path,
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
   /*************************
    * ingestion
    ************************/
@@ -5341,7 +7321,7 @@ class WatsonxDataV2 extends BaseService {
    *
    * @param {Object} params - The parameters to send to the service.
    * @param {string} params.authInstanceId - watsonx.data instance ID.
-   * @param {number} [params.page] - Page number of requested ingestion jobs.
+   * @param {string} [params.start] - Page number of requested ingestion jobs.
    * @param {number} [params.jobsPerPage] - Number of requested ingestion jobs.
    * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
    * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJobCollection>>}
@@ -5351,14 +7331,14 @@ class WatsonxDataV2 extends BaseService {
   ): Promise<WatsonxDataV2.Response<WatsonxDataV2.IngestionJobCollection>> {
     const _params = { ...params };
     const _requiredParams = ['authInstanceId'];
-    const _validParams = ['authInstanceId', 'page', 'jobsPerPage', 'headers'];
+    const _validParams = ['authInstanceId', 'start', 'jobsPerPage', 'headers'];
     const _validationErrors = validateParams(_params, _requiredParams, _validParams);
     if (_validationErrors) {
       return Promise.reject(_validationErrors);
     }
 
     const query = {
-      'page': _params.page,
+      'start': _params.start,
       'jobs_per_page': _params.jobsPerPage,
     };
 
@@ -5687,6 +7667,53 @@ class WatsonxDataV2 extends BaseService {
 
     return this.createRequest(parameters);
   }
+  /*************************
+   * endpoints
+   ************************/
+
+  /**
+   * Get CPG and CAS endpoints.
+   *
+   * Get Common policy gateway (CPG) and  Data Access Service(CAS) endpoints.
+   *
+   * @param {Object} [params] - The parameters to send to the service.
+   * @param {string} [params.authInstanceId] - watsonx.data instance ID.
+   * @param {OutgoingHttpHeaders} [params.headers] - Custom request headers
+   * @returns {Promise<WatsonxDataV2.Response<WatsonxDataV2.EndpointCollection>>}
+   */
+  public getEndpoints(
+    params?: WatsonxDataV2.GetEndpointsParams
+  ): Promise<WatsonxDataV2.Response<WatsonxDataV2.EndpointCollection>> {
+    const _params = { ...params };
+    const _requiredParams = [];
+    const _validParams = ['authInstanceId', 'headers'];
+    const _validationErrors = validateParams(_params, _requiredParams, _validParams);
+    if (_validationErrors) {
+      return Promise.reject(_validationErrors);
+    }
+
+    const sdkHeaders = getSdkHeaders(WatsonxDataV2.DEFAULT_SERVICE_NAME, 'v2', 'getEndpoints');
+
+    const parameters = {
+      options: {
+        url: '/endpoints',
+        method: 'GET',
+      },
+      defaultOptions: extend(true, {}, this.baseOptions, {
+        headers: extend(
+          true,
+          sdkHeaders,
+          {
+            'Accept': 'application/json',
+            'AuthInstanceId': _params.authInstanceId,
+          },
+          _params.headers
+        ),
+      }),
+    };
+
+    return this.createRequest(parameters);
+  }
 }
 
 /*************************
@@ -5719,15 +7746,13 @@ namespace WatsonxDataV2 {
 
   /** Parameters for the `listBucketRegistrations` operation. */
   export interface ListBucketRegistrationsParams {
-    /** CRN. */
+    /** Instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
 
   /** Parameters for the `createBucketRegistration` operation. */
   export interface CreateBucketRegistrationParams {
-    /** bucket details. */
-    bucketDetails: BucketDetails;
     /** bucket type. */
     bucketType: CreateBucketRegistrationConstants.BucketType | string;
     /** bucket description. */
@@ -5736,13 +7761,17 @@ namespace WatsonxDataV2 {
     managedBy: CreateBucketRegistrationConstants.ManagedBy | string;
     /** bucket catalog. */
     associatedCatalog?: BucketCatalog;
+    /** bucket details. */
+    bucketDetails?: BucketDetails;
     /** bucket display name. */
     bucketDisplayName?: string;
     /** region where the bucket is located. */
     region?: string;
+    /** storage details. */
+    storageDetails?: StorageDetails;
     /** tags. */
     tags?: string[];
-    /** CRN. */
+    /** Instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -5755,6 +7784,9 @@ namespace WatsonxDataV2 {
       MINIO = 'minio',
       IBM_COS = 'ibm_cos',
       IBM_CEPH = 'ibm_ceph',
+      ADLS_GEN1 = 'adls_gen1',
+      ADLS_GEN2 = 'adls_gen2',
+      GOOGLE_CS = 'google_cs',
     }
     /** managed by. */
     export enum ManagedBy {
@@ -5772,8 +7804,8 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
-  /** Parameters for the `deregisterBucket` operation. */
-  export interface DeregisterBucketParams {
+  /** Parameters for the `deleteBucketRegistration` operation. */
+  export interface DeleteBucketRegistrationParams {
     /** bucket id. */
     bucketId: string;
     /** CRN. */
@@ -5793,7 +7825,7 @@ namespace WatsonxDataV2 {
     description?: string;
     /** Tags. */
     tags?: string[];
-    /** CRN. */
+    /** Instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -5820,14 +7852,72 @@ namespace WatsonxDataV2 {
   export interface ListBucketObjectsParams {
     /** bucket id. */
     bucketId: string;
-    /** CRN. */
+    /** Instance ID. */
+    authInstanceId?: string;
+    /** path. */
+    path?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getBucketObjectProperties` operation. */
+  export interface GetBucketObjectPropertiesParams {
+    /** bucket id. */
+    bucketId: string;
+    /** bucket object size. */
+    paths?: Path[];
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createHdfsStorage` operation. */
+  export interface CreateHdfsStorageParams {
+    /** Bucket display name. */
+    bucketDisplayName: string;
+    /** Bucket type. */
+    bucketType: string;
+    /** HMS Thrift URI. */
+    hmsThriftUri: string;
+    /** HMS Thrift Port. */
+    hmsThriftPort: number;
+    /** contents of core-site.xml file. */
+    coreSite: string;
+    /** contents of hdfs-site.xml file. */
+    hdfsSite: string;
+    /** Kerberos Flag. */
+    kerberos: string;
+    /** Catalog name. */
+    catalogName: string;
+    /** Catalog type. */
+    catalogType: string;
+    /** Kerberos config file. */
+    krb5Config?: string;
+    /** Hive keytab file. */
+    hiveKeytab?: NodeJS.ReadableStream | Buffer;
+    /** The content type of hiveKeytab. */
+    hiveKeytabContentType?: string;
+    /** HDFS keytab file. */
+    hdfsKeytab?: NodeJS.ReadableStream | Buffer;
+    /** The content type of hdfsKeytab. */
+    hdfsKeytabContentType?: string;
+    /** Hive server principal. */
+    hiveServerPrincipal?: string;
+    /** Hive client principal. */
+    hiveClientPrincipal?: string;
+    /** HDFS principal. */
+    hdfsPrincipal?: string;
+    /** Database description. */
+    description?: string;
+    /** Created on. */
+    createdOn?: string;
+    /** Instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
 
   /** Parameters for the `listDatabaseRegistrations` operation. */
   export interface ListDatabaseRegistrationsParams {
-    /** CRN. */
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -5850,7 +7940,7 @@ namespace WatsonxDataV2 {
     description?: string;
     /** tags. */
     tags?: string[];
-    /** CRN. */
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -5885,7 +7975,64 @@ namespace WatsonxDataV2 {
     description?: string;
     /** New tags. */
     tags?: string[];
+    /** List of topics. */
+    topics?: DatabaseRegistrationPatchTopicsItems[];
     /** CRN. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `listDriverRegistration` operation. */
+  export interface ListDriverRegistrationParams {
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createDriverRegistration` operation. */
+  export interface CreateDriverRegistrationParams {
+    /** Driver file to upload. */
+    driver: NodeJS.ReadableStream | Buffer;
+    /** Driver name. */
+    driverName: string;
+    /** Driver connection type. */
+    connectionType: string;
+    /** The content type of driver. */
+    driverContentType?: string;
+    /** Driver status. */
+    version?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `deleteDriverRegistration` operation. */
+  export interface DeleteDriverRegistrationParams {
+    /** Driver ID. */
+    driverId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `deleteDriverEngines` operation. */
+  export interface DeleteDriverEnginesParams {
+    /** driver id. */
+    driverId: string;
+    /** Engine id(s) to be disassociated from the driver, comma separated. */
+    engineIds: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `updateDriverEngines` operation. */
+  export interface UpdateDriverEnginesParams {
+    /** driver id. */
+    driverId: string;
+    /** List of engine IDs. */
+    engines?: string[];
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -5909,8 +8056,6 @@ namespace WatsonxDataV2 {
     origin?: CreateOtherEngineConstants.Origin | string;
     /** other engine tags. */
     tags?: string[];
-    /** Engine type. */
-    type?: string;
     /** CRN. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
@@ -5931,6 +8076,85 @@ namespace WatsonxDataV2 {
     /** engine id. */
     engineId: string;
     /** CRN. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `listAllIntegrations` operation. */
+  export interface ListAllIntegrationsParams {
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    /** API Authentication service token. */
+    secret?: string;
+    /** service_type. */
+    serviceType?: string;
+    /** state. */
+    state?: string[];
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createIntegration` operation. */
+  export interface CreateIntegrationParams {
+    /** Integration APIKEY. */
+    apikey?: string;
+    /** data policy enabler with wxd for ranger. */
+    enableDataPolicyWithinWxd?: boolean;
+    /** Integration password. */
+    password?: string;
+    /** resouce for ranger. */
+    resource?: string;
+    /** Integration type. */
+    serviceType?: string;
+    /** Comma separated list of bucket catalogs which have ikc enabled. */
+    storageCatalogs?: string[];
+    /** Integration Connection URL. */
+    url?: string;
+    /** Integration username. */
+    username?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getIntegrations` operation. */
+  export interface GetIntegrationsParams {
+    /** integration_id. */
+    integrationId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    /** API Authentication service token. */
+    secret?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `deleteIntegration` operation. */
+  export interface DeleteIntegrationParams {
+    /** integration_id. */
+    integrationId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `updateIntegration` operation. */
+  export interface UpdateIntegrationParams {
+    /** integration_id. */
+    integrationId: string;
+    /** Integration APIKEY. */
+    apikey?: string;
+    /** data policy enabler with wxd for ranger. */
+    enableDataPolicyWithinWxd?: boolean;
+    /** Integration password. */
+    password?: string;
+    /** resouce for ranger. */
+    resource?: string;
+    /** Comma separated list of bucket catalogs which have ikc enabled. */
+    storageCatalogs?: string[];
+    /** Integration Connection URL. */
+    url?: string;
+    /** Integration username. */
+    username?: string;
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -6051,6 +8275,21 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
+  /** Parameters for the `createExecuteQuery` operation. */
+  export interface CreateExecuteQueryParams {
+    /** Engine name. */
+    engineId: string;
+    /** query to be executed. */
+    sqlString: string;
+    /** Name of the catalog. */
+    catalogName?: string;
+    /** Schema name. */
+    schemaName?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
   /** Parameters for the `listPrestissimoEngines` operation. */
   export interface ListPrestissimoEnginesParams {
     /** CRN. */
@@ -6148,12 +8387,12 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
-  /** Parameters for the `addPrestissimoEngineCatalogs` operation. */
-  export interface AddPrestissimoEngineCatalogsParams {
+  /** Parameters for the `createPrestissimoEngineCatalogs` operation. */
+  export interface CreatePrestissimoEngineCatalogsParams {
     /** engine id. */
     engineId: string;
     /** catalog names. */
-    catalogNames?: string;
+    catalogName?: string;
     /** CRN. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
@@ -6257,9 +8496,9 @@ namespace WatsonxDataV2 {
   export interface ScalePrestissimoEngineParams {
     /** engine id. */
     engineId: string;
-    /** Node details. */
+    /** coordinator/worker property settings. */
     coordinator?: PrestissimoNodeDescriptionBody;
-    /** Node details. */
+    /** coordinator/worker property settings. */
     worker?: PrestissimoNodeDescriptionBody;
     /** CRN. */
     authInstanceId?: string;
@@ -6363,12 +8602,12 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
-  /** Parameters for the `addPrestoEngineCatalogs` operation. */
-  export interface AddPrestoEngineCatalogsParams {
+  /** Parameters for the `createPrestoEngineCatalogs` operation. */
+  export interface CreatePrestoEngineCatalogsParams {
     /** engine id. */
     engineId: string;
     /** catalog names. */
-    catalogNames?: string;
+    catalogName?: string;
     /** CRN. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
@@ -6477,6 +8716,200 @@ namespace WatsonxDataV2 {
     /** NodeDescription. */
     worker?: NodeDescription;
     /** CRN. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegration` operation. */
+  export interface GetSalIntegrationParams {
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createSalIntegration` operation. */
+  export interface CreateSalIntegrationParams {
+    /** IAM apikey. */
+    apikey: string;
+    /** engine ID. */
+    engineId: string;
+    /** COS storage resource crn. */
+    storageResourceCrn?: string;
+    /** COS storage type. */
+    storageType?: string;
+    /** COS storage type. */
+    trialPlan?: boolean;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `deleteSalIntegration` operation. */
+  export interface DeleteSalIntegrationParams {
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `updateSalIntegration` operation. */
+  export interface UpdateSalIntegrationParams {
+    /** op. */
+    op?: string;
+    /** path. */
+    path?: string;
+    /** path. */
+    value?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createSalIntegrationEnrichment` operation. */
+  export interface CreateSalIntegrationEnrichmentParams {
+    /** Encrichment api object. */
+    enrichmentPrototype?: EnrichmentObj;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationEnrichmentAssets` operation. */
+  export interface GetSalIntegrationEnrichmentAssetsParams {
+    /** enrichment project id. */
+    projectId?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationEnrichmentDataAsset` operation. */
+  export interface GetSalIntegrationEnrichmentDataAssetParams {
+    /** enrichment project id. */
+    projectId?: string;
+    /** enrichment data asset id. */
+    assetId?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationEnrichmentJobRunLogs` operation. */
+  export interface GetSalIntegrationEnrichmentJobRunLogsParams {
+    /** enrichment job id. */
+    jobId?: string;
+    /** enrichment job run id. */
+    jobRunId?: string;
+    /** enrichment project id. */
+    projectId?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationEnrichmentJobRuns` operation. */
+  export interface GetSalIntegrationEnrichmentJobRunsParams {
+    /** enrichment job id. */
+    jobId?: string;
+    /** enrichment project id. */
+    projectId?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationEnrichmentJobs` operation. */
+  export interface GetSalIntegrationEnrichmentJobsParams {
+    /** ikc project id. */
+    wkcProjectId?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationGlossaryTerms` operation. */
+  export interface GetSalIntegrationGlossaryTermsParams {
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationMappings` operation. */
+  export interface GetSalIntegrationMappingsParams {
+    /** catalog name. */
+    catalogName: string;
+    /** schema name. */
+    schemaName: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationEnrichmentGlobalSettings` operation. */
+  export interface GetSalIntegrationEnrichmentGlobalSettingsParams {
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createSalIntegrationEnrichmentGlobalSettings` operation. */
+  export interface CreateSalIntegrationEnrichmentGlobalSettingsParams {
+    /** semantic expansion. */
+    semanticExpansion?: SalIntegrationEnrichmentSettingsSemanticExpansion;
+    /** semantic expansion. */
+    termAssignment?: SalIntegrationEnrichmentSettingsTermAssignment;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `getSalIntegrationEnrichmentSettings` operation. */
+  export interface GetSalIntegrationEnrichmentSettingsParams {
+    /** wkc project id. */
+    projectId?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createSalIntegrationEnrichmentSettings` operation. */
+  export interface CreateSalIntegrationEnrichmentSettingsParams {
+    /** semantic expansion. */
+    semanticExpansion?: SalIntegrationEnrichmentSettingsSemanticExpansion;
+    /** semantic expansion. */
+    termAssignment?: SalIntegrationEnrichmentSettingsTermAssignment;
+    /** wkc project id. */
+    projectId?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createSalIntegrationUploadGlossary` operation. */
+  export interface CreateSalIntegrationUploadGlossaryParams {
+    /** glossary upload replace option. */
+    replaceOption: CreateSalIntegrationUploadGlossaryConstants.ReplaceOption | string;
+    /** Glossary CSV file. */
+    glossaryCsv?: NodeJS.ReadableStream | Buffer;
+    /** The content type of glossaryCsv. */
+    glossaryCsvContentType?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Constants for the `createSalIntegrationUploadGlossary` operation. */
+  export namespace CreateSalIntegrationUploadGlossaryConstants {
+    /** glossary upload replace option. */
+    export enum ReplaceOption {
+      ALL = 'all',
+      SPECIFIED = 'specified',
+      EMPTY = 'empty',
+    }
+  }
+
+  /** Parameters for the `getSalIntegrationUploadGlossaryStatus` operation. */
+  export interface GetSalIntegrationUploadGlossaryStatusParams {
+    /** upload process id. */
+    processId?: string;
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -6628,12 +9061,12 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
-  /** Parameters for the `addSparkEngineCatalogs` operation. */
-  export interface AddSparkEngineCatalogsParams {
+  /** Parameters for the `createSparkEngineCatalogs` operation. */
+  export interface CreateSparkEngineCatalogsParams {
     /** engine id. */
     engineId: string;
     /** catalog names. */
-    catalogNames?: string;
+    catalogName?: string;
     /** CRN. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
@@ -6692,8 +9125,8 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
-  /** Parameters for the `createSparkEnginePause` operation. */
-  export interface CreateSparkEnginePauseParams {
+  /** Parameters for the `pauseSparkEngine` operation. */
+  export interface PauseSparkEngineParams {
     /** engine id. */
     engineId: string;
     /** CRN. */
@@ -6701,8 +9134,8 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
-  /** Parameters for the `createSparkEngineResume` operation. */
-  export interface CreateSparkEngineResumeParams {
+  /** Parameters for the `resumeSparkEngine` operation. */
+  export interface ResumeSparkEngineParams {
     /** engine id. */
     engineId: string;
     /** CRN. */
@@ -6710,8 +9143,8 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
-  /** Parameters for the `createSparkEngineScale` operation. */
-  export interface CreateSparkEngineScaleParams {
+  /** Parameters for the `scaleSparkEngine` operation. */
+  export interface ScaleSparkEngineParams {
     /** engine id. */
     engineId: string;
     /** Node count. */
@@ -6767,7 +9200,11 @@ namespace WatsonxDataV2 {
     schemaName: string;
     /** Bucket associated to metastore where schema will be added. */
     bucketName?: string;
-    /** CRN. */
+    /** Host name. */
+    hostname?: string;
+    /** Port. */
+    port?: number;
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -6808,6 +9245,8 @@ namespace WatsonxDataV2 {
     tableId: string;
     /** engine id. */
     engineId: string;
+    /** URL encoded table type. */
+    type?: string;
     /** CRN. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
@@ -6823,13 +9262,15 @@ namespace WatsonxDataV2 {
     tableId: string;
     /** engine id. */
     engineId: string;
+    /** URL encoded table type. */
+    type?: string;
     /** CRN. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
 
-  /** Parameters for the `renameTable` operation. */
-  export interface RenameTableParams {
+  /** Parameters for the `updateTable` operation. */
+  export interface UpdateTableParams {
     /** catalog id. */
     catalogId: string;
     /** URL encoded schema name. */
@@ -6840,6 +9281,8 @@ namespace WatsonxDataV2 {
     engineId: string;
     /** New table name. */
     tableName?: string;
+    /** URL encoded table type. */
+    type?: string;
     /** CRN. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
@@ -6855,7 +9298,7 @@ namespace WatsonxDataV2 {
     schemaId: string;
     /** URL encoded schema name. */
     tableId: string;
-    /** CRN. */
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -6872,7 +9315,7 @@ namespace WatsonxDataV2 {
     tableId: string;
     /** List of the tables present in the schema. */
     columns?: Column[];
-    /** CRN. */
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -6923,7 +9366,7 @@ namespace WatsonxDataV2 {
     schemaId: string;
     /** Table ID. */
     tableId: string;
-    /** CRN. */
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -6950,9 +9393,9 @@ namespace WatsonxDataV2 {
     /** catalog ID. */
     catalogId: string;
     /** Auto add new table. */
-    autoAddNewTables: boolean;
+    autoAddNewTables?: boolean;
     /** Sync iceberg metadata. */
-    syncIcebergMd: boolean;
+    syncIcebergMd?: boolean;
     /** CRN. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
@@ -6960,22 +9403,30 @@ namespace WatsonxDataV2 {
 
   /** Parameters for the `listMilvusServices` operation. */
   export interface ListMilvusServicesParams {
-    /** CRN. */
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
 
   /** Parameters for the `createMilvusService` operation. */
   export interface CreateMilvusServiceParams {
+    /** bucket name. */
+    bucketName: string;
     /** Origin - place holder. */
     origin: string;
+    /** root path. */
+    rootPath: string;
+    /** Service display name. */
+    serviceDisplayName: string;
+    /** bucket type. */
+    bucketType?: string;
     /** Service description. */
     description?: string;
-    /** Service display name. */
-    serviceDisplayName?: string;
     /** Tags. */
     tags?: string[];
-    /** CRN. */
+    /** tshirt size. */
+    tshirtSize?: string;
+    /** watsonx.data instance ID. */
     authInstanceId?: string;
     headers?: OutgoingHttpHeaders;
   }
@@ -7013,12 +9464,61 @@ namespace WatsonxDataV2 {
     headers?: OutgoingHttpHeaders;
   }
 
+  /** Parameters for the `listMilvusServiceDatabases` operation. */
+  export interface ListMilvusServiceDatabasesParams {
+    /** service id. */
+    serviceId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `listMilvusDatabaseCollections` operation. */
+  export interface ListMilvusDatabaseCollectionsParams {
+    /** service id. */
+    serviceId: string;
+    /** database id. */
+    databaseId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createMilvusServicePause` operation. */
+  export interface CreateMilvusServicePauseParams {
+    /** service id. */
+    serviceId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createMilvusServiceResume` operation. */
+  export interface CreateMilvusServiceResumeParams {
+    /** service id. */
+    serviceId: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
+  /** Parameters for the `createMilvusServiceScale` operation. */
+  export interface CreateMilvusServiceScaleParams {
+    /** service id. */
+    serviceId: string;
+    /** tshirt size. */
+    tshirtSize?: string;
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
   /** Parameters for the `listIngestionJobs` operation. */
   export interface ListIngestionJobsParams {
     /** watsonx.data instance ID. */
     authInstanceId: string;
     /** Page number of requested ingestion jobs. */
-    page?: number;
+    start?: string;
     /** Number of requested ingestion jobs. */
     jobsPerPage?: number;
     headers?: OutgoingHttpHeaders;
@@ -7145,6 +9645,13 @@ namespace WatsonxDataV2 {
     }
   }
 
+  /** Parameters for the `getEndpoints` operation. */
+  export interface GetEndpointsParams {
+    /** watsonx.data instance ID. */
+    authInstanceId?: string;
+    headers?: OutgoingHttpHeaders;
+  }
+
   /*************************
    * model interfaces
    ************************/
@@ -7171,8 +9678,22 @@ namespace WatsonxDataV2 {
     bucket_name: string;
     /** Cos endpoint. */
     endpoint?: string;
+    /** Key file, encrypted during bucket registration. */
+    key_file?: string;
+    /** bucket provider. */
+    provider?: string;
+    /** Region where the bucket is located. */
+    region?: string;
     /** Secret access key, encrypted during bucket registration. */
     secret_key?: string;
+  }
+
+  /**
+   * muliple bucket object properties.
+   */
+  export interface BucketObjectProperties {
+    /** muliple bucket object properties. */
+    object_properties?: BucketRegistrationObjectSizeCollection[];
   }
 
   /**
@@ -7203,6 +9724,8 @@ namespace WatsonxDataV2 {
     region?: string;
     /** mark bucket active or inactive. */
     state: BucketRegistration.Constants.State | string;
+    /** storage details. */
+    storage_details?: StorageDetails;
     /** tags. */
     tags?: string[];
   }
@@ -7215,6 +9738,9 @@ namespace WatsonxDataV2 {
         MINIO = 'minio',
         IBM_COS = 'ibm_cos',
         IBM_CEPH = 'ibm_ceph',
+        ADLS_GEN1 = 'adls_gen1',
+        ADLS_GEN2 = 'adls_gen2',
+        GOOGLE_CS = 'google_cs',
       }
       /** managed by. */
       export enum ManagedBy {
@@ -7243,6 +9769,24 @@ namespace WatsonxDataV2 {
   export interface BucketRegistrationObjectCollection {
     /** bucket object. */
     objects?: string[];
+  }
+
+  /**
+   * Bucket object size.
+   */
+  export interface BucketRegistrationObjectSizeCollection {
+    /** content type. */
+    content_type?: string;
+    /** file type. */
+    file_type?: string;
+    /** bucket last modified. */
+    last_modified?: string;
+    /** Additional metadata associated with the object. */
+    metadata?: JsonObject;
+    /** bucket last modified. */
+    path?: string;
+    /** size of the bucket objects. */
+    size?: string;
   }
 
   /**
@@ -7322,6 +9866,8 @@ namespace WatsonxDataV2 {
     length?: string;
     /** scale. */
     scale?: string;
+    /** precision. */
+    precision?: string;
     /** Data type. */
     type?: string;
   }
@@ -7398,24 +9944,68 @@ namespace WatsonxDataV2 {
    * database details.
    */
   export interface DatabaseDetails {
+    /** Authentication method. */
+    authentication_type?: string;
+    /** Broker authentication password. */
+    broker_authentication_password?: string;
+    /** Broker authentication type. */
+    broker_authentication_type?: string;
+    /** Broker authentication user. */
+    broker_authentication_user?: string;
     /** contents of a pem/crt file. */
     certificate?: string;
     /** extension of the certificate file. */
     certificate_extension?: string;
+    /** connection mode. */
+    connection_method?: string;
+    /** connection mode. */
+    connection_mode?: string;
+    /** connection mode value. */
+    connection_mode_value?: string;
+    /** Connection type. */
+    connection_type?: string;
+    /** Controller authentication password. */
+    controller_authentication_password?: string;
+    /** Controller authentication type. */
+    controller_authentication_type?: string;
+    /** Controller authentication user. */
+    controller_authentication_user?: string;
+    /** CPD Hostname. */
+    cpd_hostname?: string;
+    /** Base 64 encoded json file. */
+    credentials_key?: string;
     /** Database name. */
     database_name?: string;
     /** Host name. */
-    hostname: string;
+    hostname?: string;
     /** Hostname in certificate. */
     hostname_in_certificate?: string;
     /** String of hostname:port. */
     hosts?: string;
+    /** informix server value. */
+    informix_server?: string;
     /** Psssword. */
     password?: string;
     /** Port. */
-    port: number;
+    port?: number;
+    /** Project ID. */
+    project_id?: string;
     /** SASL Mode. */
     sasl?: boolean;
+    /** service api key. */
+    service_api_key?: string;
+    /** service hostname. */
+    service_hostname?: string;
+    /** service password. */
+    service_password?: string;
+    /** Service Port. */
+    service_port?: number;
+    /** Service SSL Mode. */
+    service_ssl?: boolean;
+    /** service token url. */
+    service_token_url?: string;
+    /** service username. */
+    service_username?: string;
     /** SSL Mode. */
     ssl?: boolean;
     /** Only for Kafka - Add kafka tables. */
@@ -7424,6 +10014,8 @@ namespace WatsonxDataV2 {
     username?: string;
     /** Verify certificate. */
     validate_server_certificate?: boolean;
+    /** Verify host name. */
+    verify_host_name?: boolean;
   }
 
   /**
@@ -7454,6 +10046,8 @@ namespace WatsonxDataV2 {
     description?: string;
     /** tags. */
     tags?: string[];
+    /** List of topics. */
+    topics?: DatabaseRegistrationTopicsItems[];
   }
 
   /**
@@ -7487,6 +10081,20 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * Topic.
+   */
+  export interface DatabaseRegistrationPatchTopicsItems {
+    /** Created on. */
+    created_on?: string;
+    /** file contents. */
+    file_contents?: string;
+    /** file name. */
+    file_name?: string;
+    /** topic name. */
+    topic_name?: string;
+  }
+
+  /**
    * Key value object.
    */
   export interface DatabaseRegistrationPrototypeDatabasePropertiesItems {
@@ -7496,6 +10104,20 @@ namespace WatsonxDataV2 {
     key: string;
     /** Value of the database property. */
     value: string;
+  }
+
+  /**
+   * Topic.
+   */
+  export interface DatabaseRegistrationTopicsItems {
+    /** Created on. */
+    created_on?: string;
+    /** file content. */
+    file_contents?: string;
+    /** file name. */
+    file_name?: string;
+    /** topic name. */
+    topic_name?: string;
   }
 
   /**
@@ -7581,6 +10203,62 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * Driver registration.
+   */
+  export interface DriverRegistration {
+    /** Associated engines. */
+    associated_engines?: string[];
+    /** Driver connection type. */
+    connection_type?: string;
+    /** Driver ID auto generated during driver registration. */
+    driver_id?: string;
+    /** Driver name. */
+    driver_name?: string;
+    /** Created on. */
+    modified_at?: string;
+    /** Created by. */
+    modified_by?: string;
+    /** Driver status. */
+    status?: string;
+    /** Driver version. */
+    version?: string;
+  }
+
+  /**
+   * list driver registrations.
+   */
+  export interface DriverRegistrationCollection {
+    /** Driver collection body. */
+    driver_registrations?: DriverRegistration[];
+  }
+
+  /**
+   * Engines associated to the driver.
+   */
+  export interface DriverRegistrationEngine {
+    /** List of engine IDs. */
+    engines?: string[];
+  }
+
+  /**
+   * The service endpoint.
+   */
+  export interface Endpoint {
+    /** The external host of the service. */
+    external_host?: string;
+    /** The service type. */
+    service_type?: string;
+  }
+
+  /**
+   * List endpoints.
+   */
+  export interface EndpointCollection {
+    /** List of the endpoints CPG and CAS. */
+    endpoints?: Endpoint[];
+  }
+
+  /**
    * Node details.
    */
   export interface EngineDetailsBody {
@@ -7588,7 +10266,7 @@ namespace WatsonxDataV2 {
     api_key?: string;
     /** External engine connection string. */
     connection_string?: string;
-    /** coordinator/worker property settings. */
+    /** Coordinator/ worker properties. */
     coordinator?: NodeDescriptionBody;
     /** Instance to access the instance. */
     instance_id?: string;
@@ -7596,7 +10274,7 @@ namespace WatsonxDataV2 {
     managed_by?: string;
     /** Size config. */
     size_config?: EngineDetailsBody.Constants.SizeConfig | string;
-    /** coordinator/worker property settings. */
+    /** Coordinator/ worker properties. */
     worker?: NodeDescriptionBody;
   }
   export namespace EngineDetailsBody {
@@ -7615,12 +10293,22 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * Log Configuration settings.
+   */
+  export interface EnginePropertiesLogConfiguration {
+    /** Coordinator/ worker properties. */
+    coordinator?: NodeDescriptionBody;
+    /** Coordinator/ worker properties. */
+    worker?: NodeDescriptionBody;
+  }
+
+  /**
    * Configuration settings.
    */
   export interface EnginePropertiesOaiGen1Configuration {
-    /** coordinator/worker property settings. */
+    /** Coordinator/ worker properties. */
     coordinator?: NodeDescriptionBody;
-    /** coordinator/worker property settings. */
+    /** Coordinator/ worker properties. */
     worker?: NodeDescriptionBody;
   }
 
@@ -7628,9 +10316,9 @@ namespace WatsonxDataV2 {
    * JVM settings.
    */
   export interface EnginePropertiesOaiGen1Jvm {
-    /** coordinator/worker property settings. */
+    /** Coordinator/ worker properties. */
     coordinator?: NodeDescriptionBody;
-    /** coordinator/worker property settings. */
+    /** Coordinator/ worker properties. */
     worker?: NodeDescriptionBody;
   }
 
@@ -7638,10 +10326,113 @@ namespace WatsonxDataV2 {
    * Configuration settings for the engine properties.
    */
   export interface EnginePropertiesOaiGenConfiguration {
-    /** Node details. */
+    /** coordinator/worker property settings. */
     coordinator?: PrestissimoNodeDescriptionBody;
-    /** Node details. */
+    /** coordinator/worker property settings. */
     worker?: PrestissimoNodeDescriptionBody;
+  }
+
+  /**
+   * Encrichment asset.
+   */
+  export interface EnrichmentAsset {
+    /** schema name. */
+    asset_attributes?: string[];
+    /** data asset id. */
+    asset_id?: string;
+    /** asset name. */
+    asset_name?: string;
+    /** resource name. */
+    resource_key?: string;
+    /** schema. */
+    schema_name?: string;
+  }
+
+  /**
+   * Encrichment api object.
+   */
+  export interface EnrichmentObj {
+    /** catalog name. */
+    catalog: string;
+    /** operation type. */
+    operation: string;
+    /** schema name. */
+    schema: string;
+    /** schema name. */
+    tables?: string[];
+  }
+
+  /**
+   * integration error object.
+   */
+  export interface ErrorObj {
+    /** error code. */
+    code?: string;
+    /** error message. */
+    message?: string;
+  }
+
+  /**
+   * success response.
+   */
+  export interface ExecuteQueryCreatedBody {
+    /** ResultExecuteQuery OK. */
+    response?: ResultExecuteQuery;
+  }
+
+  /**
+   * glossary object.
+   */
+  export interface GlossaryObject {
+    /** description. */
+    description?: string;
+    /** glossary term. */
+    name?: string;
+  }
+
+  /**
+   * HDFS storage registration.
+   */
+  export interface HdfsStorageRegistration {
+    /** Actions. */
+    actions?: string[];
+    /** bucket catalog. */
+    associated_catalog: BucketCatalog;
+    /** HDFS storage display name. */
+    bucket_display_name?: string;
+    /** HDFS Storage ID auto generated during registration. */
+    bucket_id?: string;
+    /** HDFS type. */
+    bucket_type: HdfsStorageRegistration.Constants.BucketType | string;
+    /** Username who created the HDFS storage. */
+    created_by: string;
+    /** Creation date. */
+    created_on: string;
+    /** HDFS description. */
+    description: string;
+    /** managed by. */
+    managed_by: HdfsStorageRegistration.Constants.ManagedBy | string;
+    /** mark hdfs active or inactive. */
+    state: HdfsStorageRegistration.Constants.State | string;
+    /** tags. */
+    tags?: string[];
+  }
+  export namespace HdfsStorageRegistration {
+    export namespace Constants {
+      /** HDFS type. */
+      export enum BucketType {
+        HDFS = 'hdfs',
+      }
+      /** managed by. */
+      export enum ManagedBy {
+        CUSTOMER = 'customer',
+      }
+      /** mark hdfs active or inactive. */
+      export enum State {
+        ACTIVE = 'active',
+        INACTIVE = 'inactive',
+      }
+    }
   }
 
   /**
@@ -7780,6 +10571,48 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * Integration.
+   */
+  export interface Integration {
+    /** Integration APIKEY. */
+    apikey?: string;
+    /** Properties. */
+    config_properties?: string;
+    /** data policy enabler with wxd for ranger. */
+    enable_data_policy_within_wxd?: boolean;
+    /** Properties. */
+    governance_properties?: string;
+    /** resouce for ranger. */
+    integration_id?: string;
+    /** modified time in epoch format. */
+    modified_at?: number;
+    /** modified user name. */
+    modified_by?: string;
+    /** Integration password. */
+    password?: string;
+    /** resouce for ranger. */
+    resource?: string;
+    /** Integration type. */
+    service_type?: string;
+    /** current state. */
+    state?: string;
+    /** Comma separated list of storage catalogs for which ikc needs to be enabled. */
+    storage_catalogs?: string[];
+    /** Integration Connection URL. */
+    url?: string;
+    /** Username. */
+    username?: string;
+  }
+
+  /**
+   * list all existing integrations.
+   */
+  export interface IntegrationCollection {
+    /** Database body. */
+    integrations?: Integration[];
+  }
+
+  /**
    * GetSchemas OK.
    */
   export interface ListSchemasOKBody {
@@ -7800,17 +10633,33 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * List milvus collections.
+   */
+  export interface MilvusDatabaseCollections {
+    /** milvus collections. */
+    collections?: Milvusdbcollection[];
+  }
+
+  /**
    * milvus service details.
    */
   export interface MilvusService {
+    /** bucket access key. */
+    access_key?: string;
     /** Actions. */
     actions?: string[];
-    /** Created user name. */
+    /** bucket name. */
+    bucket_name?: string;
+    /** bucket type. */
+    bucket_type?: string;
+    /** Username of the user who created the watsonx.data instance. */
     created_by?: string;
     /** Created time in epoch format. */
     created_on?: number;
     /** Service description. */
     description?: string;
+    /** bucket endpoint. */
+    endpoint?: string;
     /** milvus grpc_host. */
     grpc_host?: string;
     /** milvus port. */
@@ -7823,6 +10672,10 @@ namespace WatsonxDataV2 {
     https_port?: number;
     /** Origin - place holder. */
     origin?: string;
+    /** root path. */
+    root_path?: string;
+    /** bucket secret access key. */
+    secret_key?: string;
     /** Service display name. */
     service_display_name?: string;
     /** Service programmatic name. */
@@ -7833,6 +10686,8 @@ namespace WatsonxDataV2 {
     status_code: number;
     /** Tags. */
     tags?: string[];
+    /** tshirt size. */
+    tshirt_size?: string;
     /** service type. */
     type?: string;
   }
@@ -7853,6 +10708,28 @@ namespace WatsonxDataV2 {
   export interface MilvusServiceCollection {
     /** milvus service body. */
     milvus_services?: MilvusService[];
+  }
+
+  /**
+   * List milvus databases.
+   */
+  export interface MilvusServiceDatabases {
+    /** milvus database body. */
+    databases?: string[];
+  }
+
+  /**
+   * milvus service details.
+   */
+  export interface Milvusdbcollection {
+    /** milvus collection id. */
+    collection_id?: number;
+    /** milvus status. */
+    collection_name?: string;
+    /** milvus physical channels. */
+    physical_channels?: string[];
+    /** milvus virtual channels. */
+    virtual_channels?: string[];
   }
 
   /**
@@ -7926,7 +10803,7 @@ namespace WatsonxDataV2 {
   }
 
   /**
-   * coordinator/worker property settings.
+   * Coordinator/ worker properties.
    */
   export interface NodeDescriptionBody {
     /** Node Type, r5, m, i.. */
@@ -7998,6 +10875,14 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * Bucket object size.
+   */
+  export interface Path {
+    /** object path. */
+    path?: string;
+  }
+
+  /**
    * Endpoints.
    */
   export interface PrestissimoEndpoints {
@@ -8027,7 +10912,7 @@ namespace WatsonxDataV2 {
     associated_catalogs?: string[];
     /** watsonx.data build version. */
     build_version?: string;
-    /** Node details. */
+    /** coordinator/worker property settings. */
     coordinator?: PrestissimoNodeDescriptionBody;
     /** Created user name. */
     created_by?: string;
@@ -8071,7 +10956,7 @@ namespace WatsonxDataV2 {
     type?: string;
     /** Version of the engine. */
     version?: string;
-    /** Node details. */
+    /** coordinator/worker property settings. */
     worker?: PrestissimoNodeDescriptionBody;
   }
   export namespace PrestissimoEngine {
@@ -8112,7 +10997,7 @@ namespace WatsonxDataV2 {
     api_key?: string;
     /** External engine connection string. */
     connection_string?: string;
-    /** Node details. */
+    /** coordinator/worker property settings. */
     coordinator?: PrestissimoNodeDescriptionBody;
     /** Endpoints. */
     endpoints?: PrestissimoEndpoints;
@@ -8124,7 +11009,7 @@ namespace WatsonxDataV2 {
     metastore_host?: string;
     /** Size config. */
     size_config?: PrestissimoEngineDetails.Constants.SizeConfig | string;
-    /** Node details. */
+    /** coordinator/worker property settings. */
     worker?: PrestissimoNodeDescriptionBody;
   }
   export namespace PrestissimoEngineDetails {
@@ -8146,18 +11031,18 @@ namespace WatsonxDataV2 {
    * Engine properties.
    */
   export interface PrestissimoEngineEngineProperties {
-    /** catalog properties. */
+    /** Catalog settings. */
     catalog?: PrestissimoEnginePropertiesCatalog;
     /** Configuration settings for the engine properties. */
     configuration?: EnginePropertiesOaiGenConfiguration;
-    /** velox properties. */
+    /** velox settings. */
     velox?: PrestissimoEnginePropertiesVelox;
     /** JVM settings. */
     jvm?: PrestissimoEnginePropertiesOaiGen1Jvm;
   }
 
   /**
-   * catalog properties.
+   * Catalog settings.
    */
   export interface PrestissimoEnginePropertiesCatalog {
     /** catalog name. */
@@ -8168,12 +11053,12 @@ namespace WatsonxDataV2 {
    * JVM settings.
    */
   export interface PrestissimoEnginePropertiesOaiGen1Jvm {
-    /** coordinator/worker property settings. */
+    /** Coordinator/ worker properties. */
     coordinator?: NodeDescriptionBody;
   }
 
   /**
-   * velox properties.
+   * velox settings.
    */
   export interface PrestissimoEnginePropertiesVelox {
     /** velox property. */
@@ -8181,7 +11066,7 @@ namespace WatsonxDataV2 {
   }
 
   /**
-   * Node details.
+   * coordinator/worker property settings.
    */
   export interface PrestissimoNodeDescriptionBody {
     /** Node Type, r5, m, i.. */
@@ -8283,36 +11168,50 @@ namespace WatsonxDataV2 {
    * Engine properties.
    */
   export interface PrestoEngineEngineProperties {
-    /** Catalog configuration settings. */
+    /** Catalog settings. */
     catalog?: PrestoEnginePropertiesCatalog;
     /** Configuration settings. */
     configuration?: EnginePropertiesOaiGen1Configuration;
+    /** Event Listener settings. */
+    event_listener?: PrestoEnginePropertiesEventListener;
     /** Global session is to accomodate all the custom properties that can be applicable for both coordinator and
      *  worker.
      */
     global?: PrestoEnginePropertiesGlobal;
     /** JVM settings. */
     jvm?: EnginePropertiesOaiGen1Jvm;
+    /** Log Configuration settings. */
+    log_config?: EnginePropertiesLogConfiguration;
   }
 
   /**
    * RemoveEngine properties.
    */
   export interface PrestoEnginePatchRemoveEngineProperties {
+    /** Catalog settings. */
+    catalog?: PrestoEnginePropertiesCatalog;
     /** Configuration settings for removing engine properties. */
     configuration?: RemoveEnginePropertiesOaiGenConfiguration;
     /** JVM properties. */
     jvm?: RemoveEnginePropertiesOaiGenJvm;
-    /** Catalog configuration settings. */
-    catalog?: PrestoEnginePropertiesCatalog;
+    /** Event Listener properties. */
+    event_listener?: string[];
   }
 
   /**
-   * Catalog configuration settings.
+   * Catalog settings.
    */
   export interface PrestoEnginePropertiesCatalog {
     /** Name of the catalog. */
     catalog_name?: string;
+  }
+
+  /**
+   * Event Listener settings.
+   */
+  export interface PrestoEnginePropertiesEventListener {
+    /** Event listener properties. */
+    event_listener_property?: string;
   }
 
   /**
@@ -8383,12 +11282,12 @@ namespace WatsonxDataV2 {
    * RemoveEngine properties.
    */
   export interface RemoveEngineProperties {
-    /** catalog properties. */
+    /** Catalog settings. */
     catalog?: PrestissimoEnginePropertiesCatalog;
     /** remove engine properties configuration. */
     configuration?: RemoveEnginePropertiesConfiguration;
-    /** remove engine properties configuration. */
-    jvm?: RemoveEnginePropertiesConfiguration;
+    /** JVM properties. */
+    jvm?: RemoveEnginePropertiesPrestissimoOaiGenJvm;
     /** velox description. */
     velox?: string[];
   }
@@ -8424,11 +11323,27 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * JVM properties.
+   */
+  export interface RemoveEnginePropertiesPrestissimoOaiGenJvm {
+    /** List of coordinator properties. */
+    coordinator?: string[];
+  }
+
+  /**
    * success response.
    */
   export interface ReplaceSnapshotCreatedBody {
     /** Response of success. */
     response?: SuccessResponse;
+  }
+
+  /**
+   * ResultExecuteQuery OK.
+   */
+  export interface ResultExecuteQuery {
+    /** Query result in JSON format. */
+    result?: JsonObject[];
   }
 
   /**
@@ -8465,6 +11380,284 @@ namespace WatsonxDataV2 {
     response: SuccessResponse;
     /** Result. */
     result: string;
+  }
+
+  /**
+   * Sal Integration object.
+   */
+  export interface SalIntegration {
+    /** category UUID. */
+    category_id?: string;
+    /** engine id. */
+    engine_id?: string;
+    /** errors. */
+    errors?: ErrorObj[];
+    /** governance scope UUID. */
+    governance_scope_id?: string;
+    /** governance scope type. */
+    governance_scope_type?: string;
+    /** instance_id. */
+    instance_id?: string;
+    /** status of the integration. */
+    status?: string;
+    /** COS resource CRN. */
+    storage_resource_crn?: string;
+    /** COS storage type. */
+    storage_type?: string;
+    /** sal integration creation timestamp. */
+    timestamp?: string;
+    /** whether the integration is trial plan. */
+    trial_plan?: boolean;
+    /** user name. */
+    username?: string;
+  }
+
+  /**
+   * sal integration enrichment assets.
+   */
+  export interface SalIntegrationEnrichmentAssets {
+    /** Encrichment asset. */
+    enrichment_asset?: EnrichmentAsset;
+  }
+
+  /**
+   * semantic enrichment data asset.
+   */
+  export interface SalIntegrationEnrichmentDataAsset {
+    /** name. */
+    asset?: string;
+  }
+
+  /**
+   * semantic enrichment job run.
+   */
+  export interface SalIntegrationEnrichmentJobRun {
+    /** job run response. */
+    response?: string;
+  }
+
+  /**
+   * semantic enrichment job run logs.
+   */
+  export interface SalIntegrationEnrichmentJobRunLogs {
+    /** results. */
+    results?: string[];
+    /** name. */
+    total_count?: number;
+  }
+
+  /**
+   * Sal Integration Mappings object.
+   */
+  export interface SalIntegrationEnrichmentJobs {
+    /** catalog name. */
+    jobs?: SalIntegrationEnrichmentJobsProperties;
+  }
+
+  /**
+   * catalog name.
+   */
+  export interface SalIntegrationEnrichmentJobsProperties {
+    /** Array of result items. */
+    results?: SalIntegrationEnrichmentJobsResultItem[];
+    /** Total number of rows. */
+    total_rows?: number;
+  }
+
+  /**
+   * A single result item containing entity and metadata.
+   */
+  export interface SalIntegrationEnrichmentJobsResultItem {
+    /** Entity details including job information. */
+    entity?: SalIntegrationEnrichmentJobsResultItemEntity;
+    /** Metadata information about the job. */
+    metadata?: SalIntegrationEnrichmentJobsResultItemMetadata;
+  }
+
+  /**
+   * Entity details including job information.
+   */
+  export interface SalIntegrationEnrichmentJobsResultItemEntity {
+    /** Details about the job. */
+    job?: SalIntegrationEnrichmentJobsResultItemEntityJob;
+  }
+
+  /**
+   * Details about the job.
+   */
+  export interface SalIntegrationEnrichmentJobsResultItemEntityJob {
+    /** Reference ID for the asset. */
+    asset_ref?: string;
+    /** Type of the asset reference. */
+    asset_ref_type?: string;
+    /** Configuration settings for the job. */
+    configuration?: SalIntegrationEnrichmentJobsResultItemEntityJobConfiguration;
+    /** Flag indicating if notifications are enabled for the job. */
+    enable_notifications?: boolean;
+    /** List of future scheduled run times. */
+    future_scheduled_runs?: string[];
+    /** Initiator of the last run. */
+    last_run_initiator?: string;
+    /** Status of the last run. */
+    last_run_status?: string;
+    /** Timestamp of the last run status. */
+    last_run_status_timestamp?: number;
+    /** Time of the last run. */
+    last_run_time?: string;
+    /** Name of the project associated with the job. */
+    project_name?: string;
+    /** ID of the creator of the schedule. */
+    schedule_creator_id?: string;
+    /** ID of the schedule. */
+    schedule_id?: string;
+    /** Information about the schedule. */
+    schedule_info?: ScheduleInfo;
+    /** Credentials support information for the task. */
+    task_credentials_support?: SalIntegrationEnrichmentJobsResultItemEntityTaskCredentialsSupport;
+  }
+
+  /**
+   * Configuration settings for the job.
+   */
+  export interface SalIntegrationEnrichmentJobsResultItemEntityJobConfiguration {
+    /** The environment type. */
+    env_type?: string;
+    /** Environment variables for the job. */
+    env_variables?: string[];
+  }
+
+  /**
+   * Credentials support information for the task.
+   */
+  export interface SalIntegrationEnrichmentJobsResultItemEntityTaskCredentialsSupport {
+    /** The account ID associated with the task. */
+    account_id?: string;
+    /** Indicates if task credentials are enabled. */
+    task_credentials_enabled?: boolean;
+    /** The user ID associated with the task. */
+    user_id?: string;
+  }
+
+  /**
+   * Metadata information about the job.
+   */
+  export interface SalIntegrationEnrichmentJobsResultItemMetadata {
+    /** The ID of the asset. */
+    asset_id?: string;
+    /** Name of the job. */
+    name?: string;
+    /** ID of the owner of the job. */
+    owner_id?: string;
+    /** Version of the job. */
+    version?: number;
+  }
+
+  /**
+   * Sal Integration Enrichment Settings objects.
+   */
+  export interface SalIntegrationEnrichmentSettings {
+    /** semantic expansion. */
+    semantic_expansion?: SalIntegrationEnrichmentSettingsSemanticExpansion;
+    /** semantic expansion. */
+    term_assignment?: SalIntegrationEnrichmentSettingsTermAssignment;
+  }
+
+  /**
+   * semantic expansion.
+   */
+  export interface SalIntegrationEnrichmentSettingsSemanticExpansion {
+    /** description generation. */
+    description_generation?: boolean;
+    /** description generation configuration. */
+    description_generation_configuration?: SalIntegrationEnrichmentSettingsSemanticExpansionDescriptionGenerationConfiguration;
+    /** name expansion. */
+    name_expansion?: boolean;
+    /** name expansion configuration. */
+    name_expansion_configuration?: SalIntegrationEnrichmentSettingsSemanticExpansionNameExpansionConfiguration;
+  }
+
+  /**
+   * description generation configuration.
+   */
+  export interface SalIntegrationEnrichmentSettingsSemanticExpansionDescriptionGenerationConfiguration {
+    /** assignment threshold. */
+    assignment_threshold?: number;
+    /** suggestion threshold. */
+    suggestion_threshold?: number;
+  }
+
+  /**
+   * name expansion configuration.
+   */
+  export interface SalIntegrationEnrichmentSettingsSemanticExpansionNameExpansionConfiguration {
+    /** assignment threshold. */
+    assignment_threshold?: number;
+    /** suggestion threshold. */
+    suggestion_threshold?: number;
+  }
+
+  /**
+   * semantic expansion.
+   */
+  export interface SalIntegrationEnrichmentSettingsTermAssignment {
+    /** class based assignments. */
+    class_based_assignments?: boolean;
+    /** evaluate negative assignments. */
+    evaluate_negative_assignments?: boolean;
+    /** llm based assignments. */
+    llm_based_assignments?: boolean;
+    /** ml based assignments custom. */
+    ml_based_assignments_custom?: boolean;
+    /** ml based assignments default. */
+    ml_based_assignments_default?: boolean;
+    /** name matching. */
+    name_matching?: boolean;
+    /** term assignment threshold. */
+    term_assignment_threshold?: number;
+    /** term suggestion threshold. */
+    term_suggestion_threshold?: number;
+  }
+
+  /**
+   * Sal integration glossary terms.
+   */
+  export interface SalIntegrationGlossaryTerms {
+    /** glossary object. */
+    glossary_term?: GlossaryObject;
+  }
+
+  /**
+   * Sal Integration Mappings object.
+   */
+  export interface SalIntegrationMappings {
+    /** catalog name. */
+    wkc_catalog_id?: string;
+    /** operation type. */
+    wkc_project_id?: string;
+  }
+
+  /**
+   * Sal Integration Upload Glossary.
+   */
+  export interface SalIntegrationUploadGlossary {
+    /** catalog name. */
+    process_id?: string;
+  }
+
+  /**
+   * Sal Integration Upload Glossary Status.
+   */
+  export interface SalIntegrationUploadGlossaryStatus {
+    /** catalog status. */
+    response?: string;
+  }
+
+  /**
+   * Information about the schedule.
+   */
+  export interface ScheduleInfo {
+    /** Frequency of schedule execution (e.g., daily, weekly, monthly). */
+    frequency?: string;
   }
 
   /**
@@ -8813,6 +12006,30 @@ namespace WatsonxDataV2 {
   }
 
   /**
+   * storage details.
+   */
+  export interface StorageDetails {
+    /** Access key ID, encrypted during bucket registration. */
+    access_key?: string;
+    /** Application Id for bucket registration. */
+    application_id?: string;
+    /** Auth mode types. */
+    auth_mode: string;
+    /** actual container name. */
+    container_name: string;
+    /** Directory Id for bucket registration. */
+    directory_id?: string;
+    /** ADLS endpoint. */
+    endpoint: string;
+    /** sas token, encrypted during bucket registration. */
+    sas_token?: string;
+    /** Secret access key, encrypted during bucket registration. */
+    secret_key?: string;
+    /** actual storage name. */
+    storage_account_name: string;
+  }
+
+  /**
    * Response of success.
    */
   export interface SuccessResponse {
@@ -8844,14 +12061,30 @@ namespace WatsonxDataV2 {
    * TableSnapshot.
    */
   export interface TableSnapshot {
+    /** Added data files. */
+    added_data_files?: string;
+    /** Added files size. */
+    added_files_size?: string;
+    /** Added records. */
+    added_records?: string;
+    /** Changed partition count. */
+    changed_partition_count?: string;
     /** Committed at. */
     committed_at?: string;
     /** Operation. */
     operation?: string;
     /** Snapshot id. */
     snapshot_id?: string;
-    /** Summary. */
-    summary?: string;
+    /** Total data files. */
+    total_data_files?: string;
+    /** Total delete files. */
+    total_delete_files?: string;
+    /** Total equality deletes. */
+    total_equality_deletes?: string;
+    /** Total position deletes. */
+    total_position_deletes?: string;
+    /** Total records. */
+    total_records?: string;
   }
 
   /**
@@ -8878,6 +12111,91 @@ namespace WatsonxDataV2 {
   export interface UpdateSyncCatalogOKBody {
     /** Response of success. */
     response?: SuccessResponse;
+  }
+
+  /*************************
+   * pager classes
+   ************************/
+
+  /**
+   * IngestionJobsPager can be used to simplify the use of listIngestionJobs().
+   */
+  export class IngestionJobsPager {
+    protected _hasNext: boolean;
+
+    protected pageContext: any;
+
+    protected client: WatsonxDataV2;
+
+    protected params: WatsonxDataV2.ListIngestionJobsParams;
+
+    /**
+     * Construct a IngestionJobsPager object.
+     *
+     * @param {WatsonxDataV2}  client - The service client instance used to invoke listIngestionJobs()
+     * @param {Object} params - The parameters to be passed to listIngestionJobs()
+     * @constructor
+     * @returns {IngestionJobsPager}
+     */
+    constructor(client: WatsonxDataV2, params: WatsonxDataV2.ListIngestionJobsParams) {
+      if (params && params.start) {
+        throw new Error(`the params.start field should not be set`);
+      }
+
+      this._hasNext = true;
+      this.pageContext = { next: undefined };
+      this.client = client;
+      this.params = JSON.parse(JSON.stringify(params || {}));
+    }
+
+    /**
+     * Returns true if there are potentially more results to be retrieved by invoking getNext().
+     * @returns {boolean}
+     */
+    public hasNext(): boolean {
+      return this._hasNext;
+    }
+
+    /**
+     * Returns the next page of results by invoking listIngestionJobs().
+     * @returns {Promise<WatsonxDataV2.IngestionJob[]>}
+     */
+    public async getNext(): Promise<WatsonxDataV2.IngestionJob[]> {
+      if (!this.hasNext()) {
+        throw new Error('No more results available');
+      }
+
+      if (this.pageContext.next) {
+        this.params.start = this.pageContext.next;
+      }
+      const response = await this.client.listIngestionJobs(this.params);
+      const { result } = response;
+
+      let next;
+      if (result && result.next) {
+        if (result.next.href) {
+          next = getQueryParam(result.next.href, 'start');
+        }
+      }
+      this.pageContext.next = next;
+      if (!this.pageContext.next) {
+        this._hasNext = false;
+      }
+      return result.ingestion_jobs;
+    }
+
+    /**
+     * Returns all results by invoking listIngestionJobs() repeatedly until all pages of results have been retrieved.
+     * @returns {Promise<WatsonxDataV2.IngestionJob[]>}
+     */
+    public async getAll(): Promise<WatsonxDataV2.IngestionJob[]> {
+      const results: IngestionJob[] = [];
+      while (this.hasNext()) {
+        const nextPage = await this.getNext();
+        results.push(...nextPage);
+      }
+      return results;
+    }
   }
 }
 
